@@ -3,3 +3,4 @@ Project group for SE2 course (uniTn)
 
 Members:
 Andrea Balasso
+Jari Sciampi
