@@ -5,3 +5,4 @@ Members:
 Andrea Balasso
 Jari Sciampi
 Francesco Giacomazzi
+Francesco Bonomi
