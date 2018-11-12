@@ -2,7 +2,28 @@ swagger: '2.0'
 info:
   version: '1.0'
   title: "SE2-Proj"
-  description: Blank https://github.com/Extrance/CartaBianca-SE2.git
+  description:  https://github.com/Extrance/CartaBianca-SE2.git<br>
+                API for SE2 project<br>
+                
+                <h2>/</h2><br>
+                On main page user can find links to list of users, exams, tasks and groups<br>
+                <h2>/user</h2><br>
+                On this page user can find a list of all users and view their profiles
+                <h2>/user/:id</h2><br>
+                On this page user can see the profile of a specific user
+                <h2>/exam</h2><br>
+                On this page user can find a list of all exams and view them
+                <h2>/exam/:id</h2><br>
+                On this page user can see the page of a specific exam and eventually open the single tasks
+                <h2>/group</h2><br>
+                On this page user can see the list of all groups
+                <h2>/group/:id</h2><br>
+                On this page user can see the profile of a specific group and see the user that are part of that group and the exams that they have to do
+                <h2>/task</h2><br>
+                On this page user can see the list of all tasks, he also can create new tasks
+                <h2>/task/:id</h2><br>
+                On this page user can see the specific task
+
   license:
     name: MIT
     url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
