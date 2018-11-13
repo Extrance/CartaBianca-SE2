@@ -10,19 +10,23 @@ info:
                 <h2>/user</h2><br>
                 On this page user can find a list of all users and view their profiles
                 <h2>/user/:id</h2><br>
-                On this page user can see the profile of a specific user
+                On this page user can see the profile of a specific user<br>
+                If a user not found, return 404 code
                 <h2>/exam</h2><br>
                 On this page user can find a list of all exams and view them
                 <h2>/exam/:id</h2><br>
-                On this page user can see the page of a specific exam and eventually open the single tasks
+                On this page user can see the page of a specific exam and eventually open the single tasks<br>
+                If an exam not found, return 404 code
                 <h2>/group</h2><br>
                 On this page user can see the list of all groups
                 <h2>/group/:id</h2><br>
-                On this page user can see the profile of a specific group and see the user that are part of that group and the exams that they have to do
+                On this page user can see the profile of a specific group and see the user that are part of that group and the exams that they have to do<br>
+                If a group not found, return 404 code
                 <h2>/task</h2><br>
                 On this page user can see the list of all tasks, he also can create new tasks
                 <h2>/task/:id</h2><br>
-                On this page user can see the specific task
+                On this page user can see the specific task<br>
+                If a task is not found, return 404 code
 
   license:
     name: MIT
