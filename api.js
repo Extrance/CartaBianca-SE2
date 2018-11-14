@@ -274,6 +274,7 @@ app.post('/task', function (req, res) {
     return;
   }
   else {
+   /*
     if(indextask == exams[indexexam].ex1) {
       indextask = exams[indexexam].ex2
     }
@@ -289,6 +290,24 @@ app.post('/task', function (req, res) {
     else if(indextask == exams[indexexam].ex5) {
       indextask = -1;
     }
+    */
+   switch(indextask) {
+    case (exams[indexexam].ex1): 
+        indextask = exams[indexexam].ex2;
+        break;
+    case (exams[indexexam].ex2):
+        indextask = exams[indexexam].ex3;
+        break;
+     case (exams[indexexam].ex3):
+          indextask = exams[indexexam].ex4;
+          break;
+     case (exams[indexexam].ex4):
+        indextask = exams[indexexam].ex5;
+        break;
+     case (exams[indexexam].ex5):
+        indextask = -1;
+        break;
+}
   }
 
   if(indextask == -1) {
