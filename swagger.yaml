@@ -1,9 +1,9 @@
 swagger: '2.0'
 info:
   version: '1.0'
-  title: "SE2-Proj"
+  title: "Exam-ify"
   description:  https://github.com/Extrance/CartaBianca-SE2.git<br>
-                API for SE2 project<br>
+                API description for SE2 project<br>
                 
                 <h2>/</h2><br>
                 On main page user can find links to list of users, exams, tasks and groups<br>
@@ -80,9 +80,8 @@ info:
                 Methods:<ul>
                 <li><b>get</b> - get the specific task
                 </ul>
-
-
-
   license:
     name: MIT
     url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
+    
+host: cartabiancase2-automatic.herokuapp.com
