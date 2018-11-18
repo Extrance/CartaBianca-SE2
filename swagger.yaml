@@ -7,26 +7,81 @@ info:
                 
                 <h2>/</h2><br>
                 On main page user can find links to list of users, exams, tasks and groups<br>
-                <h2>/user</h2><br>
-                On this page user can find a list of all users and view their profiles
-                <h2>/user/:id</h2><br>
-                On this page user can see the profile of a specific user<br>
-                If a user not found, return 404 code
-                <h2>/exam</h2><br>
-                On this page user can find a list of all exams and view them
-                <h2>/exam/:id</h2><br>
+                
+                <h2>/users</h2><br>
+                  On this page user can find a list of all users and view their profiles<br><br>
+                  Methods:<ul>
+                  <li><b>get</b> - get the list of all users
+                  <li><b>post</b> - add a user to the system
+                  </ul>
+                
+                
+                <h2>/users/{id}</h2><br>
+                  On this page user can see the profile of a specific user<br>
+                  If a user not found, return 404 code<br>
+                  Methods:<ul>
+                  <li><b>get</b> - get the data of a specific user e.g. name, surname, and other various fields<br>
+                  &emsp;if the user logged in is viewing HIS specific page, he may be able to:<ul>
+                    <li>see votes
+                    <li>see comments on exams that he did
+                    <li>view the list of exams that were assigned to him
+                    </ul>
+                  <li><b>delete</b> - delete the user<br>
+                  &emsp;only the user himself or the admin may be able to delete the profile
+                  </ul>
+                
+                <h2>/exams</h2><br>
+                  On this page user can find a list of all exams
+                  Methods:<ul>
+                  <li><b>get</b> - get the list of all existing exams<br>
+                  &emsp;the user should see links on exams that he created
+                  <li><b>post</b> - create a new exam
+                  </ul>
+                
+                <h2>/exams/{id}</h2><br>
                 On this page user can see the page of a specific exam and eventually open the single tasks<br>
-                If an exam not found, return 404 code
-                <h2>/group</h2><br>
-                On this page user can see the list of all groups
-                <h2>/group/:id</h2><br>
-                On this page user can see the profile of a specific group and see the user that are part of that group and the exams that they have to do<br>
-                If a group not found, return 404 code
+                If an exam not found, return 404 code<br>
+                Methods:<ul>
+                <li><b>get</b> - get the specific exam page, with all the list of tasks<br>
+                &emsp;the exam owner may view the list of tasks of the exam<br>
+                &emsp;who is attending the exam may view the list of tasks of the exam
+                <li><b>delete</b> - delete a specific exam<br>
+                &emsp;only the exam owner may delete the exam
+                </ul><br>
+                
+                <h2>/groups</h2><br>
+                On this page users can see the list of all groups
+                Methods:<ul>
+                <li><b>get</b> - get the list of all groups
+                <li><b>post</b> - create a new group
+                </ul>
+                
+                <h2>/group/{id}</h2><br>
+                If a group not found, return 404 code<br>
+                Methods:<ul>
+                <li><b>get</b> - get various data such as:<ul>
+                  <li>list of users belonging to that specific group and when they were added
+                  <li>list of exams that were assigned to that group and when (also preview the deadline)
+                  </ul>
+                <li><b>post</b> - add members to the group
+                </ul>
+                
                 <h2>/task</h2><br>
-                On this page user can see the list of all tasks, he also can create new tasks
-                <h2>/task/:id</h2><br>
+                On this page user can see the list of all tasks, he also can create new tasks<br>
+                Methods:<ul>
+                <li><b>get</b> - get the list of all tasks
+                <li><b>post</b> - create a new task
+                </ul>
+                
+                
+                <h2>/task/{id}</h2><br>
                 On this page user can see the specific task<br>
-                If a task is not found, return 404 code
+                If a task is not found, return 404 code<br>
+                Methods:<ul>
+                <li><b>get</b> - get the specific task
+                </ul>
+
+
 
   license:
     name: MIT
