@@ -7,36 +7,44 @@ const pool = new pg.Pool({
     database: 'd2o8v3sgciholh',
     password: '729588177481f511fac8c56e199a9436380e782f8f0355f8e5f2c92637c02ba7',
     port: '5432',
-    ssl: 'true'
+    ssl: 'true',
+    max: 10, // max number of clients in the pool
+    idleTimeoutMillis: 30000 // how long a client is allowed to remain idle before being closed
+
 });
 
-function exeQ(stringa){
-    pool.query(stringa)
-        .then(res => console.log(res.rows))
-        .catch(e => console.error(e.stack))
+async function query (q) {
+  const client = await pool.connect()
+  let res
+  try {
+    await client.query('BEGIN')
+    try {
+      res = await client.query(q)
+      await client.query('COMMIT')
+    } catch (err) {
+      await client.query('ROLLBACK')
+      throw err
+    }
+  } finally {
+    client.release()
+  }
+  return res
 }
 
-var diocane = [];
-diocane = exeQ('SELECT * FROM "user";');
-console.log("Res: "+diocane);
+var diocane, user, former, group;
 
-var user = [];
-pool.query('SELECT * FROM  "user";', (err, res) => {
-    user = res.rows;
-    //pool.end();
-});
+async function main () {
+  try {
+    user = await query('SELECT * FROM "user"')
+    former = await query('SELECT * FROM "former"')
+    group = await query('SELECT * FROM "group"')
+    //console.log(JSON.stringify(rows))
+  } catch (err) {
+    console.log('Database ' + err)
+  }
+}
+main()
 
-var former = [];
-pool.query('SELECT * FROM  "former";', (err, res) => {
-    former = res.rows;
-    //pool.end();
-});
-
-var group = [];
-pool.query('SELECT * FROM  "group";', (err, res) => {
-    group = res.rows;
-    //pool.end();
-});
 
 var tryi = [];
 pool.query('SELECT u.iduser AS utente, g.idgroup AS gruppo, grado FROM "user" u, "group" g, "former" f WHERE u.iduser = f.iduser OR f.idgroup = g.idgroup;', (err, res) => {
@@ -44,7 +52,8 @@ pool.query('SELECT u.iduser AS utente, g.idgroup AS gruppo, grado FROM "user" u,
 });
 
 app.get('/', (req, res) => {
-    res.send(diocane);
+    //main()
+    res.json(user.rows[0].iduser);
 });
 
 app.listen(4000, () => console.log('Example app listening on port 4000'))
