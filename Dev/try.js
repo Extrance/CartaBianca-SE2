@@ -1,34 +1,50 @@
-const express   = require('express');
-const app       = express();
-
-const { Pool, Client } = require('pg')
-const connectionString = 'postgres://ehackszoekjlvm:729588177481f511fac8c56e199a9436380e782f8f0355f8e5f2c92637c02ba7@ec2-79-125-124-30.eu-west-1.compute.amazonaws.com:5432/d2o8v3sgciholh?ssl=true'
-
-const pool = new Pool({
-  connectionString: connectionString,
-})
-
-/*const client = new Client({
-  connectionString: connectionString,
-})
-client.connect()*/
-
-app.get('/', (req, res, next) => {
-   pool.connect(function (err, client, done) {
-       if (err) {
-           console.log("Can not connect to the DB" + err);
-       }
-       client.query('SELECT * FROM users', function (err, result) {
-            done();
-            if (err) {
-                console.log(err);
-                res.status(400).send(err);
-            }
-            res.status(200).send(result.rows);
-       })
-   })
+const express = require('express');
+const pg      = require('pg');
+const app = express();
+const pool = new pg.Pool({
+    user: 'ehackszoekjlvm',
+    host: 'ec2-79-125-124-30.eu-west-1.compute.amazonaws.com',
+    database: 'd2o8v3sgciholh',
+    password: '729588177481f511fac8c56e199a9436380e782f8f0355f8e5f2c92637c02ba7',
+    port: '5432',
+    ssl: 'true'
 });
 
-app.listen(4000, function () {
-    console.log('Server is running.. on Port 4000');
+function exeQ(stringa){
+    pool.query(stringa)
+        .then(res => console.log(res.rows))
+        .catch(e => console.error(e.stack))
+}
+
+var diocane = [];
+diocane = exeQ('SELECT * FROM "user";');
+console.log("Res: "+diocane);
+
+var user = [];
+pool.query('SELECT * FROM  "user";', (err, res) => {
+    user = res.rows;
+    //pool.end();
 });
+
+var former = [];
+pool.query('SELECT * FROM  "former";', (err, res) => {
+    former = res.rows;
+    //pool.end();
+});
+
+var group = [];
+pool.query('SELECT * FROM  "group";', (err, res) => {
+    group = res.rows;
+    //pool.end();
+});
+
+var tryi = [];
+pool.query('SELECT u.iduser AS utente, g.idgroup AS gruppo, grado FROM "user" u, "group" g, "former" f WHERE u.iduser = f.iduser OR f.idgroup = g.idgroup;', (err, res) => {
+    tryi = res.rows;
+});
+
+app.get('/', (req, res) => {
+    res.send(diocane);
+});
+
+app.listen(4000, () => console.log('Example app listening on port 4000'))
