@@ -8,7 +8,7 @@ info:
                 <h2>/</h2><br>
                 On main page user can find links to list of users, exams, tasks and groups<br>
                 Methods:<ul>
-                <li><b>get</b>()<ul>
+                <li><b>get()</b><ul>
                   <li> display links to /users, /exams, /groups, /tasks (everyone)
                   </ul>
                 </ul>
