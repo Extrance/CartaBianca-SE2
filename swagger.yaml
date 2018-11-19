@@ -8,17 +8,21 @@ info:
                 <h2>/</h2><br>
                 On main page user can find links to list of users, exams, tasks and groups<br>
                 Methods:<ul>
-                <li><b>get</b> - display links to /users, /exams, /groups, /tasks (everyone)
+                <li><b>get</b>()<ul>
+                  <li> display links to /users, /exams, /groups, /tasks (everyone)
+                  </ul>
                 </ul>
                 
                 <h2>/users</h2><br>
-                  On this page user can find a list of all users and view their profiles<br><br>
+                  On this page user can find a list of all users and view their profiles<br>
                   Methods:<ul>
-                  <li><b>get</b> - get the list of all users<ul>
+                  <li><b>get()</b><ul>
                     <li>display the list of ID of all users of the website (everyone)
                     <li>display the list of ID, name and surname of all users of the website (logged in)
                     </ul>
-                  <li><b>post</b> - add a user to the system (logged in)
+                  <li><b>post(</b>user_name<b>,</b> user_surname<b>,</b> user_pw<b>)</b><ul>
+                    <li>add a user to the system (logged in)
+                    </ul>
                   </ul>
                 
                 
@@ -26,70 +30,96 @@ info:
                   Page of a specific user with matricola={id}<br>
                   If a user not found, return 404 code<br>
                   Methods:<ul>
-                  <li><b>get</b> - get the data of a specific user<ul>
+                  <li><b>get(</b>user_id<b>)</b><ul>
                     <li>display the ID of user (everyone)
                     <li>display ID, name, surname groups he’s a part of (logged in)
                     <li>display ID, name, surname, groups he’s a part of, exams to do, exams done with votes and comments (the page belongs to the logged in user)
                     </ul>
-                  <li><b>delete</b> - delete user (page belongs to the logged in user)
+                  <li><b>delete(</b>user_id<b>)</b><ul>
+                    <li>delete user (page belongs to the logged in user)
+                    </ul>
                   </ul>
                 
                 <h2>/exams</h2><br>
-                  Page of the exams subpage
+                  Page of the exams subpage<br>
                   Methods:<ul>
-                  <li><b>get</b> - display the list of names of all exams of the website (everyone)
-                  <li><b>post</b> - create a new exam (logged in)
+                  <li><b>get()</b><ul>
+                    <li>display the list of names of all exams of the website (everyone)
+                    </ul>
+                  <li><b>post(</b>user_id<b>,</b> exam_name<b>)</b><ul>
+                    <li>create a new exam (logged in)
+                    </ul>
                   </ul>
                 
                 <h2>/exams/{name}</h2><br>
                 Page of a specific exam with name={name}, eventually be able to open the single tasks<br>
                 If an exam not found, return 404 code<br>
                 Methods:<ul>
-                <li><b>get</b> - display the list of exercises (user that have to attend the exam)
-                <li><b>post</b> - assign the exam to a group (logged in)
-                <li><b>post</b> - decide who is gonna help with reviewing (who is using the exam)
-                <li><b>delete</b> - delete the exam (owner of the exam)
+                <li><b>get(</b>exam_name<b>,</b> user_id<b>)</b><ul>
+                  <li>display the list of exercises (user that have to attend the exam)
+                  </ul>
+                <li><b>post(</b>exam_id<b>,</b> group_id<b>)</b><ul>
+                  <li>assign the exam to a group (logged in)
+                  </ul>
+                <li><b>post(</b>exam_id<b>,</b> group_id<b>,</b> user_id[]<b>)</b><ul>
+                  <li>decide who is gonna help with reviewing (who is using the exam)
+                  </ul>
+                <li><b>delete(</b>exam_id<b>,</b> user_id<b>)</b><ul>
+                  <li>delete the exam (owner of the exam)
+                  </ul>
                 </ul><br>
                 
                 <h2>/groups</h2><br>
-                Page of the groups subpage
+                Page of the groups subpage<br>
                 Methods:<ul>
-                <li><b>get</b> - display the list of all groups
-                <li><b>post</b> - create a new group (logged in)
+                <li><b>get()</b><ul>
+                  <li>display the list of all groups
+                  </ul>
+                <li><b>post(</b>group_name<b>,</b> user_id[]<b>)</b><ul>
+                  <li>create a new group (logged in)
+                  </ul>
                 </ul>
                 
                 <h2>/groups/{id}</h2><br>
-                Page of a specific group with id={id}
+                Page of a specific group with id={id}<br>
                 If a group not found, return 404 code<br>
                 Methods:<ul>
-                <li><b>get</b> - display data of the group<ul>
+                <li><b>get(</b>group_id<b>,</b> user_id<b>)</b><ul>
                   <li>display the list of users of the group (logged in)
                   <li>display the list of users of the group, exams assigned (part of the group)
                   </ul>
-                <li><b>post</b> - manage the members of the group<ul>
+                <li><b>post(</b>group_id<b>,</b> user_id[]<b>)</b><ul>
                   <li>add a user to the group (admin of the group)
                   <li>remove a user from the group (admin of the group)
                   </ul>
-                <li><b>delete</b> - delete the group (admin of the group)
+                <li><b>delete(</b>group_id<b>,</b> user_id<b>)</b><ul>
+                  <li>delete the group (admin of the group)
+                  </ul>
                 </ul>
                 
                 <h2>/tasks</h2><br>
-                Page of the tasks subpage
+                Page of the tasks subpage<br>
                 Methods:<ul>
-                <li><b>get</b> - display the list of all tasks (logged in)
-                <li><b>post</b> - create a new task (logged in)
+                <li><b>get(</b>user_id<b>)</b><ul>
+                  <li>display the list of all tasks (logged in)
+                  </ul>
+                <li><b>post(</b>user_id<b>,</b> task_description<b>,</b>task_options[]<b>)</b><ul>
+                  <li>create a new task (logged in)
+                  </ul>
                 </ul>
                 
                 
                 <h2>/task/{id}</h2><br>
-                Page of a specific task with id={id}
+                Page of a specific task with id={id}<br>
                 If a task is not found, return 404 code<br>
                 Methods:<ul>
-                <li><b>get</b> - display the task depending who is viewing<ul>
+                <li><b>get(</b>task_id<b>,</b> user_id<b>,</b> <i>token</i><b>)</b><ul>
                   <li>display the task (logged in)
                   <li>display options to answer (user that is taking an exam)
                   </ul>
-                <li><b>post</b> - answer the task (user that is taking an exam)
+                <li><b>post(</b>user_id<b>,</b> task_answer[]<b>)</b><ul>
+                  <li>answer the task (user that is taking an exam)
+                  </ul>
                 </ul>
   license:
     name: MIT
