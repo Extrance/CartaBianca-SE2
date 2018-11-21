@@ -241,20 +241,15 @@ paths:
     post:
       tags:
         - Exams
-      summary: POST - Updates an exam
+      summary: POST - Update roles
       operationId: updateExam
       parameters:
         - name: examId
           in: path
-          description: ID of Exam that needs to be updated
+          description: ID of Exam that needs to be assigned
           required: true
           type: integer
           format: int64
-        - name: name
-          in: formData
-          description: Updated name of the exam
-          required: false
-          type: string
         - name: formerId
           in: formData
           description: Updated former
@@ -270,7 +265,8 @@ paths:
         '200':
           description: successful operation
         '405':
-          description: Invalid input
+          description: Invalid input 
+    
   
   /groups:
     get:
