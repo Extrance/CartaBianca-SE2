@@ -143,10 +143,6 @@ paths:
         - application/xml
         - application/json
       parameters:
-        - name: api_key
-          in: header
-          required: false
-          type: string
         - name: userId
           in: path
           description: User id to delete
@@ -215,6 +211,7 @@ paths:
           description: Invalid ID supplied
         '404':
           description: Exam not found
+          
   '/exams/{examId}':
     get:
       tags:
@@ -301,10 +298,170 @@ paths:
             $ref: '#/definitions/Groups'
         '400':
           description: Invalid Request
-  
-  
-  
-  
+  '/groups/{groupId}':
+    get:
+      tags:
+        - Groups
+      summary: GET - Display page of group by ID
+      operationId: getGroupById
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: groupId
+          in: path
+          description: ID of group to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Group not found
+    post:
+      tags:
+        - Groups
+      summary: POST - Add user to group
+      operationId: addUserToGroup
+      produces:
+        - application/xml
+        - application/json
+      parameters: 
+        - name: groupId
+          in: path
+          description: ID of group
+          required: true
+          type: integer
+          format: int64
+        - name: userId
+          in: formData
+          description: ID of user to add
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Groups'
+        '400':
+          description: Invalid Request
+    delete:
+      tags:
+        - Groups
+      summary: DELETE - Deletes a group
+      operationId: deleteGroup
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: groupId
+          in: path
+          description: Group id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Group not found
+          
+  /tasks:
+    get:
+      tags:
+        - Tasks
+      summary: GET - Returns list of tasks
+      operationId: getTasks
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+              format: int32
+    post:
+      tags:
+        - Tasks
+      summary: POST - Create a new task
+      operationId: createTask
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Tasks'
+        '400':
+          description: Invalid Request
+  '/tasks/{taskId}':
+    get:
+      tags:
+        - Tasks
+      summary: GET - Display page of task by ID
+      operationId: getTaskById
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: taskId
+          in: path
+          description: ID of task to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Task not found
+    post:
+      tags:
+        - Tasks
+      summary: POST - Answer the task
+      operationId: answerTask
+      produces:
+        - application/xml
+        - application/json
+      parameters: 
+        - name: taskId
+          in: path
+          description: ID of task
+          required: true
+          type: integer
+          format: int64
+        - name: userId
+          in: formData
+          description: ID of user that takes exam
+          required: true
+          type: integer
+          format: int64
+        - name: assignmentId
+          in: formData
+          description: ID of assignment
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Tasks'
+        '400':
+          description: Invalid Request
 
 definitions:
   
