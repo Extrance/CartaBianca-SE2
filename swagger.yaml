@@ -1,128 +1,422 @@
 swagger: '2.0'
 info:
-  version: '1.0'
-  title: "Exam-ify"
-  description:  https://github.com/Extrance/CartaBianca-SE2.git<br>
-                API description for SE2 project<br>
-                
-                <h2>/</h2><br>
-                On main page user can find links to list of users, exams, tasks and groups<br>
-                Methods:<ul>
-                <li><b>get()</b><ul>
-                  <li> display links to /users, /exams, /groups, /tasks (everyone)
-                  </ul>
-                </ul>
-                
-                <h2>/users</h2><br>
-                  On this page user can find a list of all users and view their profiles<br>
-                  Methods:<ul>
-                  <li><b>get()</b><ul>
-                    <li>display the list of ID of all users of the website (everyone)
-                    <li>display the list of ID, name and surname of all users of the website (logged in)
-                    </ul>
-                  <li><b>post(</b>user_name<b>,</b> user_surname<b>,</b> user_pw<b>)</b><ul>
-                    <li>add a user to the system (logged in)
-                    </ul>
-                  </ul>
-                
-                
-                <h2>/users/{id}</h2><br>
-                  Page of a specific user with matricola={id}<br>
-                  If a user not found, return 404 code<br>
-                  Methods:<ul>
-                  <li><b>get(</b>user_id<b>)</b><ul>
-                    <li>display the ID of user (everyone)
-                    <li>display ID, name, surname groups he’s a part of (logged in)
-                    <li>display ID, name, surname, groups he’s a part of, exams to do, exams done with votes and comments (the page belongs to the logged in user)
-                    </ul>
-                  <li><b>delete(</b>user_id<b>)</b><ul>
-                    <li>delete user (page belongs to the logged in user)
-                    </ul>
-                  </ul>
-                
-                <h2>/exams</h2><br>
-                  Page of the exams subpage<br>
-                  Methods:<ul>
-                  <li><b>get()</b><ul>
-                    <li>display the list of names of all exams of the website (everyone)
-                    </ul>
-                  <li><b>post(</b>user_id<b>,</b> exam_name<b>)</b><ul>
-                    <li>create a new exam (logged in)
-                    </ul>
-                  </ul>
-                
-                <h2>/exams/{name}</h2><br>
-                Page of a specific exam with name={name}, eventually be able to open the single tasks<br>
-                If an exam not found, return 404 code<br>
-                Methods:<ul>
-                <li><b>get(</b>exam_name<b>,</b> user_id<b>)</b><ul>
-                  <li>display the list of exercises (user that have to attend the exam)
-                  </ul>
-                <li><b>post(</b>exam_id<b>,</b> group_id<b>)</b><ul>
-                  <li>assign the exam to a group (logged in)
-                  </ul>
-                <li><b>post(</b>exam_id<b>,</b> group_id<b>,</b> user_id[]<b>)</b><ul>
-                  <li>decide who is gonna help with reviewing (who is using the exam)
-                  </ul>
-                <li><b>delete(</b>exam_id<b>,</b> user_id<b>)</b><ul>
-                  <li>delete the exam (owner of the exam)
-                  </ul>
-                </ul><br>
-                
-                <h2>/groups</h2><br>
-                Page of the groups subpage<br>
-                Methods:<ul>
-                <li><b>get()</b><ul>
-                  <li>display the list of all groups
-                  </ul>
-                <li><b>post(</b>group_name<b>,</b> user_id[]<b>)</b><ul>
-                  <li>create a new group (logged in)
-                  </ul>
-                </ul>
-                
-                <h2>/groups/{id}</h2><br>
-                Page of a specific group with id={id}<br>
-                If a group not found, return 404 code<br>
-                Methods:<ul>
-                <li><b>get(</b>group_id<b>,</b> user_id<b>)</b><ul>
-                  <li>display the list of users of the group (logged in)
-                  <li>display the list of users of the group, exams assigned (part of the group)
-                  </ul>
-                <li><b>post(</b>group_id<b>,</b> user_id[]<b>)</b><ul>
-                  <li>add a user to the group (admin of the group)
-                  <li>remove a user from the group (admin of the group)
-                  </ul>
-                <li><b>delete(</b>group_id<b>,</b> user_id<b>)</b><ul>
-                  <li>delete the group (admin of the group)
-                  </ul>
-                </ul>
-                
-                <h2>/tasks</h2><br>
-                Page of the tasks subpage<br>
-                Methods:<ul>
-                <li><b>get(</b>user_id<b>)</b><ul>
-                  <li>display the list of all tasks (logged in)
-                  </ul>
-                <li><b>post(</b>user_id<b>,</b> task_description<b>,</b>task_options[]<b>)</b><ul>
-                  <li>create a new task (logged in)
-                  </ul>
-                </ul>
-                
-                
-                <h2>/task/{id}</h2><br>
-                Page of a specific task with id={id}<br>
-                If a task is not found, return 404 code<br>
-                Methods:<ul>
-                <li><b>get(</b>task_id<b>,</b> user_id<b>,</b> <i>token</i><b>)</b><ul>
-                  <li>display the task (logged in)
-                  <li>display options to answer (user that is taking an exam)
-                  </ul>
-                <li><b>post(</b>user_id<b>,</b> task_answer[]<b>)</b><ul>
-                  <li>answer the task (user that is taking an exam)
-                  </ul>
-                </ul>
+  description: 'Exam-ify: project for SE2 unitn course'
+  version: 1.0.0
+  title: Exam-ify
   license:
-    name: MIT
-    url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
-    
-host: cartabiancase2-automatic.herokuapp.com
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: se2proj.docs.apiary.io
+basePath: /
+tags:
+  - name: Mainpage
+    description: Display Mainpage
+  - name: Users
+    description: Operations about users
+  - name: Groups
+    description: Operations about groups
+  - name: Tasks
+    description: Operations about tasks
+  - name: Exams
+    description: Operations about exams
+    externalDocs:
+      description: Find out more about our website
+      url: 'http://swagger.io'
+schemes:
+  - https
+  - http
+paths:
+  /:
+    get:
+      tags:
+        - Mainpage
+      summary: GET - Display Mainpage of the website
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/xml
+        - application/json
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+
+  /users:
+    get:
+      tags:
+        - Users
+      summary: GET - Display list of users
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/xml
+        - application/json
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+    post:
+      tags:
+        - Users
+      summary: POST - Add a new user to the site
+      description: ''
+      operationId: addUser
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: User that needs to be added
+          required: true
+          schema:
+            $ref: '#/definitions/Users'
+      responses:
+        '200':
+          description: OK
+        '405':
+          description: Invalid input
+          
+  '/users/{userId}':
+    get:
+      tags:
+        - Users
+      summary: GET - Display page of user by ID
+      operationId: getUserById
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: User not found
+    post:
+      tags:
+        - Users
+      summary: POST - Updates a user
+      operationId: updateUser
+      parameters:
+        - name: userId
+          in: path
+          description: ID of User that needs to be updated
+          required: true
+          type: integer
+          format: int64
+        - name: name
+          in: formData
+          description: Updated name of the user
+          required: false
+          type: string
+        - name: surname
+          in: formData
+          description: Updated surname of the user
+          required: false
+          type: string
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+    delete:
+      tags:
+        - Users
+      summary: DELETE - Deletes a user
+      operationId: deleteUser
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: api_key
+          in: header
+          required: false
+          type: string
+        - name: userId
+          in: path
+          description: User id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: User not found
+          
+  /exams:
+    get:
+      tags:
+        - Exams
+      summary: GET - Returns list of exams
+      operationId: getExams
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+              format: int32
+    post:
+      tags:
+        - Exams
+      summary: POST - Create a new exam
+      operationId: createExam
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Exams'
+        '400':
+          description: Invalid Request
+    delete:
+      tags:
+        - Exams
+      summary: DELETE - Deletes an exam
+      operationId: deleteExam
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: examId
+          in: header
+          required: false
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Exam not found
+  '/exams/{examId}':
+    get:
+      tags:
+        - Exams
+      summary: GET - Display page of exam by ID
+      operationId: getExamById
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: examId
+          in: path
+          description: ID of exam to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+        '404':
+          description: Exam not found
+    post:
+      tags:
+        - Exams
+      summary: POST - Updates an exam
+      operationId: updateExam
+      parameters:
+        - name: examId
+          in: path
+          description: ID of Exam that needs to be updated
+          required: true
+          type: integer
+          format: int64
+        - name: name
+          in: formData
+          description: Updated name of the exam
+          required: false
+          type: string
+        - name: formerId
+          in: formData
+          description: Updated former
+          required: false
+          type: string
+        - name: grado
+          in: formData
+          description: Grado of former updated
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '405':
+          description: Invalid input
+  
+  /groups:
+    get:
+      tags:
+        - Groups
+      summary: GET - Returns list of groups
+      operationId: getGroups
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+              format: int32
+    post:
+      tags:
+        - Groups
+      summary: POST - Create a new group
+      operationId: createGroup
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Groups'
+        '400':
+          description: Invalid Request
+  
+  
+  
+  
+
+definitions:
+  
+  Users:
+    type: object
+    properties:
+      userId:
+        type: integer
+        format: int64
+      name:
+        type: string
+      surname:
+        type: string
+      password:
+        type: string
+    xml:
+      name: Users
+      
+  Exams:
+    type: object
+    properties:
+      examId:
+        type: integer
+        format: int64
+      name:
+        type: string
+      creatorId:
+        type: integer
+        format: int64
+    xml:
+      name: Exams
+      
+  Tasks:
+    type: object
+    properties:
+      taskId:
+        type: integer
+        format: int64
+      name:
+        type: string
+      description:
+        type: string
+      answer:
+        type: string
+    xml:
+      name: Tasks    
+      
+  Groups:
+    type: object
+    properties:
+      groupId:
+        type: integer
+        format: int64
+      name:
+        type: string
+    xml:
+      name: Groups
+      
+  Former:
+    type: object
+    properties:
+      formerId:
+        type: integer
+        format: int64
+      groupId:
+        type: integer
+        format: int64
+      userId:
+        type: integer
+        format: int64
+      grado:
+        type: integer
+    xml:
+      name: Former
+      
+  ExamFormer:
+    type: object
+    properties:
+      formerId:
+        type: integer
+        format: int64
+      examId:
+        type: integer
+        format: int64
+      taskId:
+        type: integer
+        format: int64
+    xml:
+      name: Former
+      
+  Assignment:
+    type: object
+    properties:
+      assignmentId:
+        type: integer
+        format: int64
+      groupId:
+        type: integer
+        format: int64
+      examId:
+        type: integer
+        format: int64
+      mark:
+        type: integer
+        format: int64
+    xml:
+      name: Former
+      
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'
