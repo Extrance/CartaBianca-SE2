@@ -17,6 +17,8 @@ const pool = new pg.Pool({
 
 });
 
+//AGGIUNGERE A ASSIGNMENT CAMPO ASSEGNAZIONE USER TASK E ESAME(CHE ORA MANCA)
+
 async function query (q) {
   const client = await pool.connect()
   let res
@@ -39,26 +41,31 @@ async function query (q) {
 
 // ========================================================== USERS FUNCTION BEGIN ==============================================================
 
+//========================DONE========================
 async function userIn(){
   var plot = '<html><head></head><body>';
-  plot += '<h1>Users</h1><br>';
+  plot += '<h1>Lista Utenti</h1><br>';
   var user = await query('SELECT * FROM "user"');
   for(var i in user.rows){
     var u = user.rows[i];
-    plot += u.iduser +' - ' + u.name + ' - ' + u.surname +'<br>';
+    plot +=' '+'<a href="/users/'+u.iduser+'"'+'>'+u.iduser+'</a>'+' - ' + u.name + ' ' + u.surname +'<br>';
   }
-  plot += '<form action="/users/" method="post">ID: <input type="text" name="mat" /><br />NAME :<input type="text" name="name" /><br />SURNAME: <input type="text" name="surname" /><br />PASSWORD: <input type="text" name="password" /><br /><button>Submit</button></form>';
+  plot +='<br>'
+  plot+='<h3>Aggiungi utente</h3>';
+  plot += '<form action="/users/" method="post"><input type="text" name="mat" />MATRICOLA<br /><input type="text" name="name" />NOME<br /><input type="text" name="surname" />COGNOME<br /><input type="password" name="password" />PASSWORD<br /><button>Submit</button></form>';
   return plot;
 }
 
+//========================DONE========================
 async function insUt(b){
-  var mat = b.mat;
+  var mat = b.mat;  //need to make matricola automatic by the system
   var name = b.name;
   var surn = b.surname;
   var pass = b.password;
   await query ('INSERT INTO "user" VALUES ('+mat+', \''+name+'\', \''+surn+'\', \''+pass+'\');');
 }
 
+//========================DONE========================
 async function userOut(){
   console.log("im here");
   var plot = '<html><head></head><body>';
@@ -68,52 +75,57 @@ async function userOut(){
     var u = user.rows[i];
     plot += u.iduser +'<br>';
   }
-
+  plot+="<br><br><i>Per un'esperienza migliore, iscriviti o fai login</i>"
   return plot;
 }
 
+//========================DONE========================
 async function checkUt(id, idMine){
   var t = "";
-  if(parseInt(id, 10) == parseInt(idMine, 10)){
+  if(parseInt(id, 10) == parseInt(idMine, 10)) {
     var ut = await query('SELECT * FROM "user" WHERE iduser = \''+id+'\';');
-    t = '<HTML><head></head><body><h1>'+ut.rows[0].iduser+'</h1><h1>'+ut.rows[0].name+' '+ut. rows[0].surname+'</h1>';
+    t = '<HTML><head></head><body><h1>'+ut.rows[0].iduser+' - '+ut.rows[0].name+' '+ut. rows[0].surname+'</h1>';
     //console.log(ut.rows);
     var u = await query('SELECT f.idgroup, name FROM "former" f, "group" g WHERE iduser=\''+id+'\' AND f.idgroup = g.idgroup;');
     var tx = "";
-    for (var i in u.rows){
+    for (var i in u.rows) {
+      var tx = "";
       var x = await query('SELECT e.name FROM "exam" e, "assignment" a WHERE a.idgroup =\''+u.rows[i].idgroup+'\' AND e.idexam = a.idexam;')
-      for(var j in x.rows)
-        tx += '<h3>'+x.rows[j].name+'</h3>';
-      t += '<h1>'+u.rows[i].name+'</h1>';
+      for(var j in x.rows) {
+        tx += ' - '+x.rows[j].name+'<br>';
+      }
+      t += '<b>'+u.rows[i].name+'</b><br>';
+      t += tx;
     }
-    t += tx;
-
-
+    //t += tx;
     t+= '<form action="/users/'+id+'" method="post"><button>Cancella account</button></form></body></html>';
-  }else{
+  }
+  else {
     var ut = await query('SELECT * FROM "user" WHERE iduser = \''+id+'\';');
-    t = '<HTML><head></head><body><h1>'+ut.rows[0].iduser+'</h1><h1>'+ut.rows[0].name+' '+ut. rows[0].surname+'</h1>';
+    t = '<HTML><head></head><body><h1>'+ut.rows[0].iduser+' - '+ut.rows[0].name+' '+ut. rows[0].surname+'</h1>';
     //console.log(ut.rows);
     var u = await query('SELECT name FROM "former" f, "group" g WHERE iduser=\''+id+'\' AND f.idgroup = g.idgroup;');
     for (var i in u.rows){
-        t += '<h1>'+u.rows[i].name+'</h1>';
+        t += '<b>Group:</b> '+u.rows[i].name+'<br>';
     }
     t+= '</body></html>';
   }
   return t;
-
 }
 
+//========================DONE========================
 async function getUser(id){
   var u = await query('SELECT * FROM "user" WHERE iduser = \''+id+'\'');
   var t = "";
   if (u.rows[0].iduser != undefined){
-    t = '<HTML><head></head><body><h1>'+u.rows[0].iduser+'</h1></body></HTML>';
+    t = '<HTML><head></head><body><h1>'+u.rows[0].iduser+'</h1>';
+    t+="<br><br><i>Per vedere i dati di un utente, iscriviti o fai login</i>"
+    t+='</body></HTML>';
   }
   return t;
-
 }
 
+//========================DONE========================
 async function delUt(id){
   await query('DELETE FROM "former" WHERE iduser = \''+id+'\'');
   await query('DELETE FROM "user" WHERE iduser = \''+id+'\'');
@@ -122,16 +134,17 @@ async function delUt(id){
 // ========================================================== USERS FUNCTION END ================================================================
 // =========================================================== FUNCT EXAM BEGIN =================================================================
 
-async function getExam(id){
+async function getExam(id) {
   var u = await query('SELECT * FROM "exam" WHERE idexam = \''+id+'\';');
   var t = '<html><head></head><body><h1>'+ u.rows[0].name+'</h1>';
-  var k = await query('SELECT idtask FROM "examFormer" WHERE idexam = \''+id+'\';');
-  for (var i in k.rows){
-    var s = await query('SELECT * FROM task WHERE idtask=\''+k.rows[i].idtask+'\'');
-    t+= '<h2>'+s.rows[0].name+': '+s.rows[0].description+'</h2>';
-  }
-  if (logged){
+  if (logged) {
+    var k = await query('SELECT idtask FROM "examFormer" WHERE idexam = \''+id+'\';');
+    for (var i in k.rows) {
+      var s = await query('SELECT * FROM task WHERE idtask=\''+k.rows[i].idtask+'\'');
+      t+= '<b>'+s.rows[0].name+': '+'</b><br>'+' - '+s.rows[0].description+'<br>';
+    }
     if (parseInt(logId, 10) == parseInt(u.rows[0].idcreatore, 10)){
+      t+='<br><br>'
       t+= '<form action="/exams/'+id+'" method="post">Nome task: <select name="nome">';
       var a = await query('SELECT * FROM "task";');
       for(var j in a.rows){
@@ -140,31 +153,44 @@ async function getExam(id){
       t += '</select><button>Aggiungi task</button></form>';
     }
   }
-  return t;
-}
-
-async function getExams(){
-  var u = await query('SELECT * FROM "exam"');
-  var t = '<html><head></head><body>';
-  var x = '';
-  if(logged){
-    for (var i in u.rows){
-      if (parseInt(logId, 10) == parseInt(u.rows[i].idcreatore, 10)) x+= '<option value="'+u.rows[i].idexam+'">'+u.rows[i].name+'</option>';
-      t+= '<h1>'+u.rows[i].name+'</h1>';
-    }
-    t+= '<form action="/exams/" method="post">Nome esame: <input type="text" name="nome"><br /><button>Crea esame</button></form>';
-    t+= '<form action="/exams/delete" method="post">Nome esame:  <select name="exs">';
-    t+= x;
-    t+='</select> <button>Elimina esame</button></form>';
-  }else{
-    for (var i in u.rows){
-      t += '<h1>'+u.rows[i].name+'</h1>';
-    }
+  else {
+    t+="<br><br><i>Per visualizzare dettagli dell'esame, iscriviti o fai login</i>"
   }
   return t;
 }
 
-async function createEx(n){
+async function getExams() {
+  var u = await query('SELECT * FROM "exam"');
+  var t = '<html><head></head><body>';
+  var x = '';
+  t+='<h1>Lista Esami</h1>';
+  if(logged){
+    for (var i in u.rows) {
+      if (parseInt(logId, 10) == parseInt(u.rows[i].idcreatore, 10)) {
+        x+= '<option value="'+u.rows[i].idexam+'">'+u.rows[i].name+'</option>';
+      }
+      t +=' '+'<a href="/exams/'+u.rows[i].idexam+'"'+'>'+u.rows[i].name+'</a>'+'<br>';
+    }
+    t+='<br>';
+    t+='<h3>Crea Esame</h3>';
+    t+= '<form action="/exams/" method="post">Nome esame: <input type="text" name="nome">'+' '+'<button>Crea esame</button></form>';
+    t+='<br>';
+    t+='<h3>Elimina Esame</h3>';
+    t+= '<form action="/exams/delete" method="post">Nome esame:  <select name="exs">';
+    t+= x;
+    t+='</select>'+' '+'<button>Elimina esame</button></form>';
+  }
+  else {
+    for (var i in u.rows){
+      t += u.rows[i].name+'<br>';
+      //t +=' '+'<a href="/exams/'+u.rows[i].idexam+'"'+'>'+u.rows[i].name+'</a>'+'<br>';
+    }
+    t+="<br><br><i>Per un'esperienza migliore, iscriviti o fai login</i>"
+  }
+  return t;
+}
+
+async function createEx(n) {
   console.log('INSERT INTO "exam" (name, idcreatore) VALUES (\''+ n +' \', \''+logId+'\')');
   await query('INSERT INTO "exam" (name, idcreatore) VALUES (\''+ n +'\', \''+logId+'\');');
 }
@@ -173,33 +199,43 @@ async function createEx(n){
 // ========================================================== FUNCT GROUP BEGIN =================================================================
 
 async function getGroups(){
-  var t = '<html><head></head><body><h1>Group</h1>';
+  var t = '<html><head></head><body><h1>List of Groups</h1>';
   var g = await query('SELECT * FROM "group";');
-  for (var i in g.rows){
-    t += '<h3>('+g.rows[i].idgroup+') - '+g.rows[i].name+'</h3>';
-  }
-  if (logged){
+  if(logged) {
+    for (var i in g.rows){
+      //t += '<b>('+g.rows[i].idgroup+')</b> - '+g.rows[i].name+'<br>';
+      t +='<b>('+g.rows[i].idgroup+')</b> - '+'<a href="/groups/'+g.rows[i].idgroup+'"'+'>'+g.rows[i].name+'</a><br>';
+    }
+    t+='<br><br>'
     t += '<form action="/groups/" method="post">Nome gruppo:<input type ="text" name="name"><br /><button>Crea gruppo!</button></form>';
+  }
+  else {
+    for (var i in g.rows){
+      t += '<b>('+g.rows[i].idgroup+')</b> - '+g.rows[i].name+'<br>';
+    }
+    t+="<br><br><i>Per un'esperienza migliore, iscriviti o fai login</i>"
   }
   return t;
 }
 
-async function getGroup(id){
+async function getGroup(id) {
   var g = await query('SELECT g.name as name, u.name as nome, u.surname as surn, u.iduser as iduser  FROM "group" g, "former" f, "user" u WHERE g.idgroup = \''+id+'\' AND g.idgroup = f.idgroup AND f.iduser = u.iduser;');
   var t = '<html><head></head><body><h1>Group: '+g.rows[0].name+'</h1>';
   for (var j in g.rows){
-    t+= '<h3>'+g.rows[j].iduser+' '+g.rows[j].surn+' '+g.rows[j].nome +'</h3>';
+    t+='<b>'+g.rows[j].iduser+'</b> - '+g.rows[j].surn+' '+g.rows[j].nome +'<br>';
   }
-  if (logged){
+  if (logged) {
     var x = await query ('SELECT * FROM "former" WHERE idgroup = \''+id+'\' AND iduser = \''+logId+'\'');
-    if(parseInt(x.rows[0].grado, 10) == 2)
+    if(parseInt(x.rows[0].grado, 10) == 2) {
       var u = await query('SELECT iduser, name, surname FROM "user" WHERE iduser <>'+logId);
       var s = '';
       for(var i in u.rows){
         s += '<option value="'+u.rows[i].iduser+'">'+u.rows[i].name +' '+u.rows[i].surname+'</option>';
       }
+      t += '<br>'
       t += '<form action="/groups/'+id+'" method="post">Aggiungi:<select name="membro">'+s+'</select><button>Aggiungi al gruppo!</button></form>';
       t += '<form action=/groups/del/'+id+' method="post"><button>Cancella gruppo</button></form>';
+    }
   }
   return t;
 }
@@ -207,14 +243,18 @@ async function getGroup(id){
 // =========================================================== FUNCT GROUP END ==================================================================
 // ========================================================== FUNCT TASK BEGIN ==================================================================
 
+//========================DONE========================
 async function getTasks(){
-  var t = '<html><head></head><body><h1>Tasks:</h1>';
+  var t = '<html><head></head><body><h1>Lista Tasks:</h1>';
   var g = await query('SELECT * FROM "task";');
   for (var i in g.rows){
-    t += '<h3>'+g.rows[i].name+'</h3>';
+    //t += '<h2>'+g.rows[i].name+'</h2>';
+    t +=' '+'<a href="/tasks/'+g.rows[i].idtask+'"'+'>'+g.rows[i].name+'</a>'+'<br>';
   }
   if (logged){
-    t += '<form action="/tasks/" method="post">Nome task:<input type ="text" name="name"><br />Descrizione task:<input type ="text" name="desc"><br />Risposta:<input type ="text" name="risp"><br /><button>Crea task!</button></form>';
+    t+='<br>';
+    t+='<h3>Crea Task</h3>';
+    t += '<form action="/tasks/" method="post"><input type ="text" name="name">Nome task<br /><input type ="text" name="desc">Descrizione task<br /><input type ="text" name="risp">Risposta<br /><button>Crea task!</button></form>';
   }
   return t;
 }
@@ -230,26 +270,35 @@ async function getTask(id){
   return t;
 }
 
+/*async function getAssignment(id) {
+
+}*/
+
 // =========================================================== FUNCT TASK END ===================================================================
 
 var logged = true;
-var logId = 171935;
+var logId = 185010;
 
+//========================DONE========================
 app.get('/', (req, res) => {
     //main()
     //res.json(user.rows[0].iduser);
   res.write('<html><head></head><body>')
-  res.write( '<b><h1>CARTA BIANCA SE2</h1></b>Welcome to our website<br>'+
+  res.write( '<b><h1>CARTA BIANCA SE2</h1></b><b>Welcome to our website</b><br><br>'+
                 ' '+'<a href="/users/">List of Users</a>'+"<br>"+
                 ' '+'<a href="/exams/">List of Exams</a>'+"<br>"+
                 ' '+'<a href="/groups/">List of Groups</a>'+"<br>"+
                 ' '+'<a href="/tasks/">List of Tasks</a>'+"<br>"+
                 ' '+'<a href="/assignments/">List of Assignments</a>'+"<br>")
+  if(!logged) {
+    res.write("<br><br><i>Per un'esperienza migliore, iscriviti o fai login</i>")
+  }
   res.end('</body></html>');
 });
 
 // ---------------- USER PAGES ----------------
 
+//========================DONE========================
 app.get('/users/', async(req, res, next) => {
   try{
     var t = (logged) ? await userIn() : await userOut();
@@ -260,6 +309,7 @@ app.get('/users/', async(req, res, next) => {
   }
 });
 
+//========================DONE========================
 app.post('/users/', async (req, res, next) => {
   var a = req.body;
   try{
@@ -271,6 +321,7 @@ app.post('/users/', async (req, res, next) => {
 
 });
 
+//========================DONE========================
 app.get('/users/:id', async (req, res, next) => {
   try{
     var id = req.params.id;
@@ -285,6 +336,7 @@ app.get('/users/:id', async (req, res, next) => {
   }
 });
 
+//========================DONE========================
 app.post('/users/:id', async (req, res, next) => {
   try{
     await delUt(req.params.id);
@@ -343,17 +395,20 @@ app.post('/exams/:id', async (req, res, next) => {
     var id = req.params.id;
     var task = req.body.nome;
     await query('INSERT INTO "examFormer" (idexam, idtask) VALUES (\''+id+'\', \''+task+'\');');
-    res.redirect('/exams/'+id);
   }catch(e){
     next(e);
   }
 });
 
 
+
+
 // ---------------- GROUP PAGES ----------------
 
+//========================DONE========================
 app.get('/groups/', async (req, res, next) => {
   try{
+
     var t = await getGroups();
     res.write(t);
     res.end('</body></html>');
@@ -362,6 +417,7 @@ app.get('/groups/', async (req, res, next) => {
   }
 });
 
+//========================DONE========================
 app.post('/groups/', async (req, res, next) => {
   try{
     await query('INSERT INTO "group" (name) VALUES (\''+req.body.name+'\')');
@@ -373,6 +429,7 @@ app.post('/groups/', async (req, res, next) => {
   }
 });
 
+//========================DONE========================
 app.get('/groups/:id', async (req, res, next) => {
   try{
     var t = await getGroup(req.params.id);
@@ -383,6 +440,7 @@ app.get('/groups/:id', async (req, res, next) => {
   }
 });
 
+//========================DONE========================
 app.post('/groups/:id', async (req, res, next) => {
   try{
     await query('INSERT INTO "former" (idgroup, iduser, grado) VALUES (\''+req.params.id+'\', \''+req.body.membro+'\', \'1\');');
@@ -392,6 +450,7 @@ app.post('/groups/:id', async (req, res, next) => {
   }
 });
 
+//========================DONE========================
 app.post('/groups/del/:id', async (req, res, next) => {
   try{
     await query('DELETE FROM "former" WHERE idgroup = \''+req.params.id+'\'');
@@ -404,6 +463,7 @@ app.post('/groups/del/:id', async (req, res, next) => {
 
 // ---------------- TASK PAGES ----------------
 
+//========================DONE========================
 app.get('/tasks/', async (req, res, next) => {
   try{
     var t = await getTasks();
@@ -414,6 +474,7 @@ app.get('/tasks/', async (req, res, next) => {
   }
 });
 
+//========================DONE========================
 app.post('/tasks/', async (req, res, next) => {
   try{
     await query('INSERT INTO "task" (name, description, answer) VALUES (\''+req.body.name+'\', \''+req.body.desc+'\', \''+req.body.risp+'\')');
@@ -423,6 +484,7 @@ app.post('/tasks/', async (req, res, next) => {
   }
 });
 
+//========================DONE========================
 app.get('/tasks/:id', async (req, res, next) => {
   try{
     var t = await getTask(req.params.id);
@@ -433,6 +495,7 @@ app.get('/tasks/:id', async (req, res, next) => {
   }
 });
 
+//========================DONE========================
 app.post('/tasks/:id', async (req, res, next) => {
   try{
     //var voto = calcolaVoto(req.params.id, req.body.ans);
@@ -446,9 +509,20 @@ app.post('/tasks/:id', async (req, res, next) => {
 
 // ---------------- ASSIGNMENT PAGES ----------------
 
-app.get('/assignments/', async (req, res, next) => {
+/*app.get('/assignments/', async (req, res, next) => {
   try{
     res.json((await query('SELECT * FROM "assignment";')).rows);
+    //res.json((await query('SELECT * FROM "taskAw";')).rows);
+  }catch(e){
+    next(e);
+  }
+});*/
+
+app.get('/assignments/:id', async (req, res, next) => {
+  try{
+    var t = await getAssignment(req.params.id);
+    res.write(t);
+    res.end('</body></html>');
   }catch(e){
     next(e);
   }
