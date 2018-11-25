@@ -1,0 +1,37 @@
+test('basic test', () => {
+    expect(true).toBe(true);
+});
+
+
+test('test userOut', () => {
+  var usertest1 = await query('SELECT * FROM "user";');
+  var test1 = '<html><head></head><body>'+'<h1>Users</h1><br>';
+  for(var i in usertest1.rows){
+    var u = usertest1.rows[i];
+    usertest1 += u.iduser +'<br>';
+  }
+  usertest1+="<br><br><i>Per un'esperienza migliore, iscriviti o fai login</i>";
+  expect(userOut()).toBe(usertest1);
+});
+
+test('test userIn', () => {
+    var usertest2 = await query('SELECT * FROM "user"');
+    var test2 = '<html><head></head><body>'+'<h1>Lista Utenti</h1><br>';
+    for(var i in usertest2.rows){
+      var u = usertest2.rows[i];
+      test2 +=' '+'<a href="/users/'+u.iduser+'"'+'>'+u.iduser+'</a>'+' - ' + u.name + ' ' + u.surname +'<br>';
+    }
+    u +='<br>'
+    u+='<h3>Aggiungi utente</h3>';
+    u += '<form action="/users/" method="post"><input type="text" name="mat" />MATRICOLA<br /><input type="text" name="name" />NOME<br /><input type="text" name="surname" />COGNOME<br /><input type="password" name="password" />PASSWORD<br /><button>Submit</button></form>';
+    expect(userIn()).toBe(u);
+});
+
+test('test insUt', () => {
+    var mat = 188188
+    var name = testn
+    var surname = tests
+    var pass = testp
+    var b = {mat,name,surname,pass}
+    expect(insUt(b)).toBe(b);
+});
