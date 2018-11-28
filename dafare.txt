@@ -1,0 +1,23 @@
+The GET / can be a health check endpoint but is not quite correct for an API to say "display main page of the website":
+- Modifica su ApiAry nelle definizioni
+
+
+Some services do not define Request/Response objects:
+- Still apiAry
+
+
+The exam model seems to miss some properties, for instance where do you store the deadline? how do you relate exams with students and tasks?
+- Add deadline
+- Push Exam for Assignm
+- Only a DOC (different MAT format) can enter the Exams page
+
+The task model doesn't seem to support different type of questions (like multiple choice of free-form) since I do not see a type property or something similar.
+- Add coloumn type
+- Add coloumn multiSolution
+- Add coloumn openField
+
+The answer model seems to be completed.
+- Nothing to state here.
+
+The current status of the API doesn't seem to support reviews yet.
+- Holy shit I totally forgot
