@@ -59,7 +59,7 @@ paths:
       tags:
         - Users
       summary: POST - Add a new user to the site
-      description: ''
+      description: Add a user
       operationId: addUser
       consumes:
         - application/json
@@ -68,8 +68,8 @@ paths:
         - application/xml
         - application/json
       parameters:
-        - in: body
-          name: body
+        - name: userId
+          in: body
           description: User that needs to be added
           required: true
           schema:
