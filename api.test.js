@@ -115,6 +115,76 @@ describe('/users/nonexistingID', async() => {
 
 //------------------------ EXAMS ------------------------
 
+describe('GET /exams/', async() => {
+  it('should return 200', async() => {
+    var t = await getExams();
+    expect(t.status).toBe(200);
+  })
+})
+
+describe('GET /exams/existingID', async() => {
+  it('should return 200', async() => {
+    var t = await getExamByIdTest(6);
+    expect(t.status).toBe(200);
+  })
+})
+
+describe('GET /exams/nonexistingID', async() => {
+  it('should return 404', async() => {
+    var t = await getExamByIdTest(-1);
+    expect(t.status).toBe(404);
+  })
+})
+
+describe('DELETE /exam/delete OK', async() => {
+  it('should return 200', async() => {
+    var t = await delEx(16);
+    expect(t).toBe(200);
+  })
+})
+
+describe('DELETE /exam/delete NO', async() => {
+  it('should return 400', async() => {
+    var t = await delEx();
+    expect(t).toBe(400);
+  })
+})
+
+describe('POST /exams/ OK', async() => {
+  it('should return 200', async() => {
+    var t = await createEx('nome', logId);
+    expect(t).toBe(200);
+  })
+})
+
+describe('POST /exams/ NO', async() => {
+  it('should return 400', async() => {
+    var t = await createEx('nome', 10);
+    expect(t).toBe(400);
+  })
+})
+
+describe('POST /exams/nonExistingID', async() => {
+  it('should return 400', async() => {
+    var t = await insEx(17, 3);
+    expect(t).toBe(400);
+  })
+})
+
+describe('POST /exams/existingID NO', async() => {
+  it('should return 400', async() => {
+    var t = await insEx(6, -1);
+    expect(t).toBe(400);
+  })
+})
+
+describe('POST /exams/existingID', async() => {
+  it('should return 200', async() => {
+    var t = await insEx(6, 6);  //worked before adding the task
+    expect(t).toBe(200);
+  })
+})
+
 //----------------------- GROUPS -----------------------
 
 describe('GET /groups/', async() => {
@@ -340,78 +410,6 @@ async function delUt(id){
 
 //------------------------ EXAMS ------------------------
 
-describe('GET /exams/', async() => {
-  it('should return 200', async() => {
-    var t = await getExams();
-    expect(t.status).toBe(200);
-  })
-})
-
-describe('GET /exams/existingID', async() => {
-  it('should return 200', async() => {
-    var t = await getExamByIdTest(6);
-    expect(t.status).toBe(200);
-  })
-})
-
-describe('GET /exams/nonexistingID', async() => {
-  it('should return 404', async() => {
-    var t = await getExamByIdTest(-1);
-    expect(t.status).toBe(404);
-  })
-})
-
-describe('DELETE /exam/delete OK', async() => {
-  it('should return 200', async() => {
-    var t = await delEx(16);
-    expect(t).toBe(200);
-  })
-})
-
-describe('DELETE /exam/delete NO', async() => {
-  it('should return 400', async() => {
-    var t = await delEx();
-    expect(t).toBe(400);
-  })
-})
-
-describe('POST /exams/ OK', async() => {
-  it('should return 200', async() => {
-    var t = await createEx('nome', logId);
-    expect(t).toBe(200);
-  })
-})
-
-describe('POST /exams/ NO', async() => {
-  it('should return 400', async() => {
-    var t = await createEx('nome', 10);
-    expect(t).toBe(400);
-  })
-})
-
-describe('POST /exams/nonExistingID', async() => {
-  it('should return 400', async() => {
-    var t = await insEx(17, 3);
-    expect(t).toBe(400);
-  })
-})
-
-describe('POST /exams/existingID NO', async() => {
-  it('should return 400', async() => {
-    var t = await insEx(6, -1);
-    expect(t).toBe(400);
-  })
-})
-
-describe('POST /exams/existingID', async() => {
-  it('should return 200', async() => {
-    var t = await insEx(6, 6);  //worked before adding the task
-    expect(t).toBe(200);
-  })
-})
-
-//------------------------------------------------------------------------------
-
 async function getExams() {
   var u = await query('SELECT * FROM "exam"');
   var t = '<html><head></head><body>';
@@ -512,7 +510,6 @@ async function insEx(id, task){
 		return 400;
 	}
 }
-
 
 //----------------------- GROUPS -----------------------
 
