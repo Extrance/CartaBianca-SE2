@@ -78,7 +78,7 @@ paths:
         '200':
           description: OK
         '404':
-          description: Invalid input    
+          description: Invalid input
   '/users/{userId}':
     get:
       tags:
@@ -150,7 +150,7 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: User not found       
+          description: User not found
   /exams:
     get:
       tags:
@@ -219,7 +219,7 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: Exam not found    
+          description: Exam not found
   '/exams/{examId}':
     get:
       tags:
@@ -376,7 +376,7 @@ paths:
         '400':
           description: Invalid ID supplied
         '404':
-          description: Group not found         
+          description: Group not found
   /tasks:
     get:
       tags:
@@ -534,7 +534,7 @@ definitions:
       grado:
         type: integer
     xml:
-      name: Former  
+      name: Former
   ExamFormer:
     type: object
     properties:
