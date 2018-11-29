@@ -30,7 +30,7 @@ paths:
     get:
       tags:
         - Mainpage
-      summary: GET - Display Mainpage of the website
+      summary: GET - Allow user to navigate through links
       consumes:
         - application/json
         - application/xml
@@ -45,7 +45,8 @@ paths:
     get:
       tags:
         - Users
-      summary: GET - Display list of users
+      summary: GET - Display list of all users
+      operationId: userIn || userOut
       consumes:
         - application/json
         - application/xml
@@ -60,7 +61,7 @@ paths:
         - Users
       summary: POST - Add a new user to the site
       description: Add a user
-      operationId: addUser
+      operationId: insUt
       consumes:
         - application/json
         - application/xml
@@ -69,22 +70,37 @@ paths:
         - application/json
       parameters:
         - name: userId
-          in: body
-          description: User that needs to be added
+          in: formData
+          description: ID of User that needs to be added
           required: true
-          schema:
-            $ref: '#/definitions/Users'
+          type: integer
+          format: int64
+        - name: name
+          in: formData
+          description: Name of the user to add
+          required: true
+          type: string
+        - name: surname
+          in: formData
+          description: Surname of the user to add
+          required: true
+          type: string
+        - name: password
+          in: formData
+          description: Password of the user to add
+          required: true
+          type: string
       responses:
         '200':
           description: OK
         '404':
-          description: Invalid input
+          description: Wrong typo, user not registered
   '/users/{userId}':
     get:
       tags:
         - Users
       summary: GET - Display page of user by ID
-      operationId: getUserById
+      operationId: getUserByIdTest
       produces:
         - application/xml
         - application/json
@@ -98,42 +114,13 @@ paths:
       responses:
         '200':
           description: OK, valid request
-        '400':
-          description: Invalid ID supplied
         '404':
           description: User not found
-    post:
-      tags:
-        - Users
-      summary: POST - Updates a user
-      operationId: updateUser
-      parameters:
-        - name: userId
-          in: path
-          description: ID of User that needs to be updated
-          required: true
-          type: integer
-          format: int64
-        - name: name
-          in: formData
-          description: Updated name of the user
-          required: false
-          type: string
-        - name: surname
-          in: formData
-          description: Updated surname of the user
-          required: false
-          type: string
-      responses:
-        '200':
-          description: successful operation
-        '404':
-          description: Invalid input
     delete:
       tags:
         - Users
       summary: DELETE - Deletes a user
-      operationId: deleteUser
+      operationId: delUt
       produces:
         - application/xml
         - application/json
@@ -148,9 +135,7 @@ paths:
         '200':
           description: successful operation
         '400':
-          description: Invalid ID supplied
-        '404':
-          description: User not found
+          description: Wrong typo, user not deleted
   /exams:
     get:
       tags:
@@ -163,16 +148,11 @@ paths:
       responses:
         '200':
           description: successful operation
-          schema:
-            type: object
-            additionalProperties:
-              type: integer
-              format: int32
     post:
       tags:
         - Exams
       summary: POST - Create a new exam
-      operationId: createExam
+      operationId: createEx
       produces:
         - application/xml
         - application/json
