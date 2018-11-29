@@ -255,14 +255,14 @@ app.post('/tasks/:id', async (req, res, next) => {
 
 // ---------------- ASSIGNMENT PAGES ----------------
 
-/*app.get('/assignments/', async (req, res, next) => {
+app.get('/assignments/', async (req, res, next) => {
   try{
     res.json((await query('SELECT * FROM "assignment";')).rows);
     //res.json((await query('SELECT * FROM "taskAw";')).rows);
   }catch(e){
     next(e);
   }
-});*/
+});
 
 app.get('/assignments/:id', async (req, res, next) => {
   try{
