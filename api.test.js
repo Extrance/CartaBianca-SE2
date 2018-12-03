@@ -60,22 +60,22 @@ describe('GET /users/', async() => {
 })
 
 describe('POST /users/', async() => {
-  it('should return 200', async() => {
+  it('should return 201', async() => {
 	var b = {
-		mat: 1001,
+		mat: 199876,
 		name: 'nome1',
 		surname: 'surname1',
 		password: 'ppp1'
 	};
     var t = await insUt(b);
-    expect(t).toBe(200);
+    expect(t).toBe(201);
   })
 })
 
 describe('POST /users/ existing id', async() => {
   it('should return 400', async() => {
 	var b = {
-		mat: 100,
+		mat: 185010,
 		name: 'nome',
 		surname: 'surname',
 		password: 'ppp'
@@ -110,6 +110,19 @@ describe('/users/nonexistingID', async() => {
   it('should return 400', async() => {
     var t = await delUt();
     expect(t).toBe(400);
+  })
+})
+
+describe('POST /users/', async() => {
+  it('should return 406', async() => {
+	var b = {
+		mat: 1234,
+		name: 'nome1',
+		surname: 'surname1',
+		password: 'ppp1'
+	};
+    var t = await insUt(b);
+    expect(t).toBe(406);
   })
 })
 
@@ -330,11 +343,15 @@ async function insUt(b){
   var name = b.name;
   var surn = b.surname;
   var pass = b.password;
-  var stato = 200;
-  try{
-	await query ('INSERT INTO "user" VALUES ('+mat+', \''+name+'\', \''+surn+'\', \''+pass+'\');');
-  }catch(e) {
-	stato = 400;
+  var stato = 201;
+  if(mat<=99999 || mat>=1000000)
+    stato = 406 //not acceptable
+  else {
+    try{
+  	await query ('INSERT INTO "user" VALUES ('+mat+', \''+name+'\', \''+surn+'\', \''+pass+'\');');
+    }catch(e) {
+  	stato = 400;
+    }
   }
   return stato;
 }
