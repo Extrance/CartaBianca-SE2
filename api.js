@@ -309,11 +309,15 @@ async function insUt(b){
   var name = b.name;
   var surn = b.surname;
   var pass = b.password;
-  var stato = 200;
-  try{
+  var stato = 201;
+  if(mat<=99999 || mat>=1000000)
+    stato = 406 //not acceptable
+  else {
+    try{
 	await query ('INSERT INTO "user" VALUES ('+mat+', \''+name+'\', \''+surn+'\', \''+pass+'\');');
-  }catch(e) {
-	stato = 400;
+    }catch(e) {
+  	stato = 400;
+    }
   }
   return stato;
 }
