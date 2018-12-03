@@ -1,7 +1,8 @@
-const express = require('express');
-const pg      = require('pg');
-const app = express();
-const bodyParser = require('body-parser');
+const 	express 	= require('express');
+const 	pg      	= require('pg');
+var 	sha1 	  	= require('sha1');
+const 	app 		= express();
+const 	bodyParser 	= require('body-parser');
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -37,8 +38,8 @@ async function query (q) {
   return res
 }
 
-var logged = true;
-var logId = 185010;
+var logged = false;
+var logId;
 
 // ---------------- MAIN ----------------
 
@@ -48,6 +49,7 @@ app.get('/', async (req, res) => {
   console.log(statusss.status);
   res.send(statusss.text);
 });
+
 
 // ---------------- USER PAGES ----------------
 
@@ -66,9 +68,9 @@ app.post('/users/', async (req, res, next) => {
   var a = req.body;
   try{
     var a = await insUt(a);
-    if(a==200)
+    if(a==201)
       res.redirect('/users');
-	   if(a==400)
+	   if(a==406 || a == 400)
       res.write('Wrong typo, user not registered. <br /> <a href="/users/>Go back</a>"');
   }catch(e){
     next(e);
@@ -98,6 +100,33 @@ app.post('/users/:id', async (req, res, next) => {
 	   if(t==400)
      res.write('Wrong typo, user not deleted. <br /> <a href="/users/'+req.params.id+'>Go back</a>"');
   }catch (e){
+    next(e);
+  }
+});
+
+app.post('/lin/', async (req, res, next) => {
+  try{
+    var t = await linFunc(req.body);
+    if(t==200)
+      res.redirect('/users');
+	   if(t==400)
+     res.write('Wrong typo, user not loggedIn. <br /> <a href="/users/">Go back</a>"');
+  }catch (e){
+    next(e);
+  }
+});
+
+app.post('/slog/', async (req, res, next) => {
+  try{
+    var a = await slog();
+	console.log(a);
+	if(a==200){
+		res.redirect('/users/');
+	}else{
+		res.write('Errore in slogphase.');
+	}
+  }catch (e){
+	  console.log(e);
     next(e);
   }
 });
@@ -279,17 +308,32 @@ app.get('/assignments/:id', async (req, res, next) => {
 //USERS
 function getMain() {
   var t =""
-  t+='<html><head></head><body>'
+  t+='<html><head></head><body>';
   t+='<b><h1>CARTA BIANCA SE2</h1></b><b>Welcome to our website</b><br><br>'+
                 ' '+'<a href="/users/">List of Users</a>'+"<br>"+
                 ' '+'<a href="/exams/">List of Exams</a>'+"<br>"+
                 ' '+'<a href="/groups/">List of Groups</a>'+"<br>"+
                 ' '+'<a href="/tasks/">List of Tasks</a>'+"<br>"+
-                ' '+'<a href="/assignments/">List of Assignments</a>'+"<br>"
-  t+='</body></html>'
+                ' '+'<a href="/assignments/">List of Assignments</a>'+"<br>";
+  t+='</body></html>';
   return {status:200,text:t};
 }
 
+async function userOut(){
+  var plot = '<html><head></head><body>';
+  plot += '<h1>Lista Utenti</h1><br>';
+  var user = await query('SELECT * FROM "user"');
+  for(var i in user.rows){
+    var u = user.rows[i];
+    plot +=' '+'<a href="/users/'+u.iduser+'"'+'>'+u.iduser+'</a>'+' - ' + u.name + ' ' + u.surname +'<br>';
+  }
+  plot +='<br>'	
+  plot += '<form action="/users/" method="post">REGISTRATI<br />Matricola: <input type="number" name="matr" min="100000" max="199999" placeholder="100000"/><br />Nome: <input type="text" name="name" placeholder="name"/><br />'+
+		'Cognome: <input type="text" name="surname" placeholder="surname"/><br />Password: <input type="password" name="password" /><br /><button>Registrati!</button></form>';
+  plot += '<form action="/lin/" method="post">LOGIN<br />Matricola: <input type="number" name="matr" min="100000" max="199999" placeholder="100000"/><br />Password: <input type="password" name="password" /><br /><button>LogIn!</button></form>';
+	
+  return {status:200,text:plot};
+}
 async function userIn(){
   var plot = '<html><head></head><body>';
   plot += '<h1>Lista Utenti</h1><br>';
@@ -299,24 +343,53 @@ async function userIn(){
     plot +=' '+'<a href="/users/'+u.iduser+'"'+'>'+u.iduser+'</a>'+' - ' + u.name + ' ' + u.surname +'<br>';
   }
   plot +='<br>'
-  plot+='<h3>Aggiungi utente</h3>';
-  plot += '<form action="/users/" method="post"><input type="text" name="mat" />MATRICOLA<br /><input type="text" name="name" />NOME<br /><input type="text" name="surname" />COGNOME<br /><input type="password" name="password" />PASSWORD<br /><button>Submit</button></form>';
+  plot+='<h3>Esci come utente '+logId+'</h3>';
+  plot += '<form action="/slog/" method="post"><button>Slogga!</button></form>';
   return {status:200,text:plot};
 }
 
+async function linFunc(b){
+	console.log(b);
+	var mat = b.matr;
+	var pass = sha1(b.password);
+	var stato = 400;
+	var utente = await query('SELECT * FROM "user" WHERE iduser = \''+mat+'\' AND password = \''+pass+'\';');
+	if(utente.rows[0].iduser !=  undefined){
+		logId = utente.rows[0].iduser;
+		logged = true;
+		console.log(logId);
+		stato = 200;
+	}
+	return stato;
+}
+
+async function slog(){
+	var s = 200;
+	try{
+		logged = false;
+		logId = "";
+	}catch(e){
+		next(e)
+		s = 400;
+	}
+	return s;
+}
+
 async function insUt(b){
-  var mat = b.mat;  //need to make matricola automatic by the system
+  var mat = b.matr;  //need to make matricola automatic by the system
   var name = b.name;
   var surn = b.surname;
   var pass = b.password;
+  pass = sha1(pass);
   var stato = 201;
   if(mat<=99999 || mat>=1000000)
     stato = 406 //not acceptable
   else {
     try{
-	await query ('INSERT INTO "user" VALUES ('+mat+', \''+name+'\', \''+surn+'\', \''+pass+'\');');
+		console.log("Pass: " + pass);
+		await query ('INSERT INTO "user" VALUES ('+mat+', \''+name+'\', \''+surn+'\', \''+pass+'\');');
     }catch(e) {
-  	stato = 400;
+		stato = 400;
     }
   }
   return stato;

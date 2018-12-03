@@ -1,4 +1,4 @@
-CREATE TABLE "user" (
+CREATE TABLE user (
     idUser INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
     surname TEXT NOT NULL,
