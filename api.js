@@ -237,7 +237,7 @@ app.post('/groups/del/:id', async (req, res, next) => {
   }
 });
 
-// ---------------- TASK PAGES ----------------
+// ---------------- TASK PAGES -----------------
 
 app.get('/tasks/', async (req, res, next) => {
   try{
