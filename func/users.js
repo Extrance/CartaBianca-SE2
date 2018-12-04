@@ -1,4 +1,5 @@
-const db = require('./dbconnect.js')
+const	db 		= require('./dbconnect.js')
+var 	sha1 	= require('sha1');
 
 exports.getMain = () => {
   var t =""
@@ -13,7 +14,7 @@ exports.getMain = () => {
   return {status:200,text:t};
 }
 
-exports.userIn = async() => {
+exports.userIn = async(logId) => {
   var plot = '<html><head></head><body>';
   plot += '<h1>Lista Utenti</h1><br>';
   var user = await db.query('SELECT * FROM "user"');
@@ -54,26 +55,39 @@ exports.insUt = async(b)=>{
   else {
     try{
 		console.log("Pass: " + pass);
-		await dq.query ('INSERT INTO "user" VALUES ('+mat+', \''+name+'\', \''+surn+'\', \''+pass+'\');');
+		await db.query ('INSERT INTO "user" VALUES ('+mat+', \''+name+'\', \''+surn+'\', \''+pass+'\');');
     }catch(e) {
+		console.log(e);
 		stato = 400;
     }
   }
   return stato;
 }
 
-exports.getUserByIdTest = async(id) =>{
+exports.getUserByIdTest = async(logged, id, logId) =>{
   var t = {status:200,text:""}
   try{
     t = (logged) ? await checkUt(id, logId) : await getUser(id);  //fix the logId
     return t;
   }
   catch (e) {
+	  console.log(e);
     console.log('404');
     t.status = 404;
     t.text = "";
     return t;
   }
+}
+
+exports.linFunc = async(b) => {
+	var mat = b.matr;
+	var pass = sha1(b.password);
+	var stato = 400;
+	var utente = await db.query('SELECT * FROM "user" WHERE iduser = \''+mat+'\' AND password = \''+pass+'\';');
+	if(utente.rows[0].iduser !=  undefined){
+		stato = 200;
+	}
+	return stato;
 }
 
 exports.delUt = async(id) =>{
@@ -90,14 +104,14 @@ exports.delUt = async(id) =>{
 async function checkUt(id, idMine) {
   var t = "";
   if(parseInt(id, 10) == parseInt(idMine, 10)) {
-    var ut = await dq.query('SELECT * FROM "user" WHERE iduser = \''+id+'\';');
+    var ut = await db.query('SELECT * FROM "user" WHERE iduser = \''+id+'\';');
     t = '<HTML><head></head><body><h1>'+ut.rows[0].iduser+' - '+ut.rows[0].name+' '+ut. rows[0].surname+'</h1>';
     //console.log(ut.rows);
-    var u = await dq.query('SELECT f.idgroup, name FROM "former" f, "group" g WHERE iduser=\''+id+'\' AND f.idgroup = g.idgroup;');
+    var u = await db.query('SELECT f.idgroup, name FROM "former" f, "group" g WHERE iduser=\''+id+'\' AND f.idgroup = g.idgroup;');
     var tx = "";
     for (var i in u.rows) {
       var tx = "";
-      var x = await dq.query('SELECT e.name FROM "exam" e, "assignment" a WHERE a.idgroup =\''+u.rows[i].idgroup+'\' AND e.idexam = a.idexam;')
+      var x = await db.query('SELECT e.name FROM "exam" e, "assignment" a WHERE a.idgroup =\''+u.rows[i].idgroup+'\' AND e.idexam = a.idexam;')
       for(var j in x.rows) {
         tx += ' - '+x.rows[j].name+'<br>';
       }
@@ -108,10 +122,10 @@ async function checkUt(id, idMine) {
     t+= '<form action="/users/'+id+'" method="post"><button>Cancella account</button></form></body></html>';
   }
   else {
-    var ut = await dq.query('SELECT * FROM "user" WHERE iduser = \''+id+'\';');
+    var ut = await db.query('SELECT * FROM "user" WHERE iduser = \''+id+'\';');
     t = '<HTML><head></head><body><h1>'+ut.rows[0].iduser+' - '+ut.rows[0].name+' '+ut. rows[0].surname+'</h1>';
     //console.log(ut.rows);
-    var u = await dq.query('SELECT name FROM "former" f, "group" g WHERE iduser=\''+id+'\' AND f.idgroup = g.idgroup;');
+    var u = await db.query('SELECT name FROM "former" f, "group" g WHERE iduser=\''+id+'\' AND f.idgroup = g.idgroup;');
     for (var i in u.rows){
         t += '<b>Group:</b> '+u.rows[i].name+'<br>';
     }

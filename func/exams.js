@@ -1,6 +1,6 @@
 const db = require('./dbconnect.js')
 
-exports.getExams = async() =>{
+exports.getExams = async(logged, logId) =>{
   var u = await db.query('SELECT * FROM "exam"');
   var t = '<html><head></head><body>';
   var x = '';
@@ -31,10 +31,10 @@ exports.getExams = async() =>{
   return {status:200,text:t};
 }
 
-exports.getExamByIdTest = async(id) =>{
+exports.getExamByIdTest = async(id, logged, logId) =>{
   var t = {status:200,text:""}
   try{
-    t = await getExam(id);
+    t = await getExam(id, logged, logId);
     return t;
   }
   catch (e) {
@@ -73,7 +73,7 @@ exports.insEx = async(id, task) =>{
 	}
 }
 
-async function getExam(id) {
+async function getExam(id, logged, logId) {
   var u = await db.query('SELECT * FROM "exam" WHERE idexam = \''+id+'\';');
   if (u.rows[0].idexam != undefined) {
     var t = '<html><head></head><body><h1>'+ u.rows[0].name+'</h1>';

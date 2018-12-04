@@ -1,6 +1,6 @@
 const db = require('./dbconnect.js')
 
-exports.getGroups = async() => {
+exports.getGroups = async(logged) => {
   var t = '<html><head></head><body><h1>List of Groups</h1>';
   var g = await db.query('SELECT * FROM "group";');
   if(logged) {
@@ -20,7 +20,7 @@ exports.getGroups = async() => {
   return {status:200,text:t};
 }
 
-exports.insGr = async(name) =>{
+exports.insGr = async(name, logId) =>{
 	try{
 		await db.query('INSERT INTO "group" (name) VALUES (\''+name+'\')');
 		var t = await db.query('SELECT * FROM "group" ORDER BY idgroup DESC LIMIT 1;');
@@ -31,13 +31,14 @@ exports.insGr = async(name) =>{
 	}
 }
 
-exports.getGroupByIdTest = async(id) =>{
+exports.getGroupByIdTest = async(id, logged, logId) =>{
   var t = {status:200,text:""}
   try{
-    var t = await getGroup(id);
+    var t = await getGroup(id, logged, logId);
     return t;
   }
   catch(e) {
+	  console.log(e);
     console.log('404');
     t.status = 404;
     t.text = "";
@@ -56,22 +57,25 @@ exports.insertGroupById = async(id,membro) =>{
 
 exports.delGr = async(id) =>{
   try{
-    await db.query('DELETE FROM "former" WHERE idgroup = \''+req.params.id+'\'');
-    await db.query('DELETE FROM "group" WHERE idgroup = \''+req.params.id+'\'');
+    await db.query('DELETE FROM "former" WHERE idgroup = \''+id+'\'');
+    await db.query('DELETE FROM "group" WHERE idgroup = \''+id+'\'');
     return 200;
   }catch(e){
+	  console.warn(e);
     return 400;
   }
 }
 
-async function getGroup(id) {
+async function getGroup(id, logged, logId) {
   var g = await db.query('SELECT g.name as name, u.name as nome, u.surname as surn, u.iduser as iduser  FROM "group" g, "former" f, "user" u WHERE g.idgroup = \''+id+'\' AND g.idgroup = f.idgroup AND f.iduser = u.iduser;');
   if(g.rows[0].name != undefined) {
     var t = '<html><head></head><body><h1>Group: '+g.rows[0].name+'</h1>';
+	var check = false;
     for (var j in g.rows){
+		if (parseInt(g.rows[j].iduser,10) == parseInt(logId, 10)) check = true;
       t+='<b>'+g.rows[j].iduser+'</b> - '+g.rows[j].surn+' '+g.rows[j].nome +'<br>';
     }
-    if (logged) {
+    if (logged && check) {
       var x = await db.query ('SELECT * FROM "former" WHERE idgroup = \''+id+'\' AND iduser = \''+logId+'\'');
       if(parseInt(x.rows[0].grado, 10) == 2) {
         var u = await db.query('SELECT iduser, name, surname FROM "user" WHERE iduser <>'+logId);

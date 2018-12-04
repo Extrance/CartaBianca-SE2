@@ -1,6 +1,5 @@
 const 	express 	= require('express');
 const 	pg      	= require('pg');
-var 	sha1 	  	= require('sha1');
 const 	app 		= express();
 const 	bodyParser 	= require('body-parser');
 const usersfunctions = require('./func/users.js')
@@ -31,7 +30,7 @@ app.get('/', async (req, res) => {
 //OK
 app.get('/users/', async(req, res, next) => {
   try{
-    var t = (logged) ? await usersfunctions.userIn() : await usersfunctions.userOut();
+    var t = (logged) ? await usersfunctions.userIn(logId) : await usersfunctions.userOut();
     res.write(t.text);
     console.log(t.status);
     res.end('</body></html>');
@@ -45,6 +44,7 @@ app.post('/users/', async (req, res, next) => {
   var a = req.body;
   try{
     var a = await usersfunctions.insUt(a);
+	console.log('A: ' +a); 
     if(a==201)
       res.redirect('/users');
 	   if(a==406 || a == 400)
@@ -57,7 +57,7 @@ app.post('/users/', async (req, res, next) => {
 //OK
 app.get('/users/:id', async (req, res, next) => {
   var id = req.params.id;
-  var t = await usersfunctions.getUserByIdTest(id);
+  var t = await usersfunctions.getUserByIdTest(logged, id, logId);
   if(t.status == 404) {
     res.sendStatus(404);
   }
@@ -75,7 +75,7 @@ app.post('/users/:id', async (req, res, next) => {
   try{
     var t = await usersfunctions.delUt(req.params.id);
     if(t==200)
-      res.redirect('/users');
+      res.redirect('/users/');
 	   if(t==400)
      res.write('Wrong typo, user not deleted. <br /> <a href="/users/'+req.params.id+'>Go back</a>"');
   }catch (e){
@@ -87,9 +87,11 @@ app.post('/users/:id', async (req, res, next) => {
 
 app.post('/lin/', async (req, res, next) => {
   try{
-    var t = await linFunc(req.body);
+    var t = await usersfunctions.linFunc(req.body);
     if(t==200)
-      res.redirect('/users');
+		logged = true;
+		logId = req.body.matr;
+		res.redirect('/users/');
 	   if(t==400)
      res.write('Wrong typo, user not loggedIn. <br /> <a href="/users/">Go back</a>"');
   }catch (e){
@@ -99,9 +101,15 @@ app.post('/lin/', async (req, res, next) => {
 
 app.post('/slog/', async (req, res, next) => {
   try{
-    var a = await slog();
-	console.log(a);
-	if(a==200){
+	var s = 200;
+	try{
+		logged = false;
+		logId = "";
+	}catch(e){
+		next(e)
+		s = 400;
+	}
+	if(s==200){
 		res.redirect('/users/');
 	}else{
 		res.write('Errore in slogphase.');
@@ -118,7 +126,7 @@ app.post('/slog/', async (req, res, next) => {
 //OK
 app.get('/exams/', async (req, res, next) => {
   try{
-    var t = await examsfunctions.getExams();
+    var t = await examsfunctions.getExams(logged, logId);
     res.write(t.text);
     res.end('</body></html>')
   }catch (e){
@@ -151,7 +159,7 @@ app.post('/exams/delete', async (req, res, next) => {
 
 //OK
 app.get('/exams/:id', async (req, res, next) => {
-    var t = await examsfunctions.getExamByIdTest(req.params.id);
+    var t = await examsfunctions.getExamByIdTest(req.params.id, logged, logId);
     if(t.status == 200) {
       res.write(t.text);
       res.end('</body></html>')
@@ -176,7 +184,7 @@ app.post('/exams/:id', async (req, res, next) => {
 //OK
 app.get('/groups/', async (req, res, next) => {
   try{
-    var t = await groupsfunctions.getGroups();
+    var t = await groupsfunctions.getGroups(logged);
     res.write(t.text);
     res.end('</body></html>');
   }catch(e){
@@ -187,7 +195,7 @@ app.get('/groups/', async (req, res, next) => {
 //OK
 app.post('/groups/', async (req, res, next) => {
   try{
-	   var t = await groupsfunctions.insGr(req.body.name);
+	   var t = await groupsfunctions.insGr(req.body.name, logId);
 	   if (t==200) res.redirect('/groups/');
 	   if (t==400) res.write('Wrong typo, group not created. <br /> <a href="/groups/">Go back</a>"');
   }catch(e){
@@ -198,7 +206,7 @@ app.post('/groups/', async (req, res, next) => {
 //OK
 app.get('/groups/:id', async (req, res, next) => {
   try{
-    var t = await groupsfunctions.getGroupByIdTest(req.params.id);
+    var t = await groupsfunctions.getGroupByIdTest(req.params.id, logged, logId);
     res.write(t.text);
     res.end('</body></html>');
   }catch(e){
@@ -210,7 +218,7 @@ app.get('/groups/:id', async (req, res, next) => {
 app.post('/groups/:id', async (req, res, next) => {
   try{
     var t = await groupsfunctions.insertGroupById(req.params.id,req.body.membro);
-    if (t==200) res.redirect('/groups/');
+    if (t==200) res.redirect('/groups/'+req.params.id);
     if (t==400) res.write('Wrong typo, not inserted. <br /> <a href="/groups/">Go back</a>"');
   }catch(e){
     next(e);
@@ -233,7 +241,7 @@ app.post('/groups/del/:id', async (req, res, next) => {
 //OK
 app.get('/tasks/', async (req, res, next) => {
   try{
-    var t = await tasksfunctions.getTasks();
+    var t = await tasksfunctions.getTasks(logged);
     res.write(t.text);
     res.end('</body></html>');
   }catch(e){
@@ -255,7 +263,7 @@ app.post('/tasks/', async (req, res, next) => {
 //OK
 app.get('/tasks/:id', async (req, res, next) => {
   try{
-    var t = await tasksfunctions.getTask(req.params.id);
+    var t = await tasksfunctions.getTask(req.params.id, logged);
     res.write(t.text);
     res.end('</body></html>');
   }catch(e){
@@ -266,7 +274,7 @@ app.get('/tasks/:id', async (req, res, next) => {
 //
 app.post('/tasks/:id', async (req, res, next) => {
   try{
-    var t = await tasksfunctions.insertTaskById(req.params.id,req.body.ans)
+    var t = await tasksfunctions.insertTaskById(req.params.id,req.body.ans, logId)
     if (t==200) res.redirect('/tasks/');
     if (t==400) res.write('Wrong typo, not inserted. <br /> <a href="/tasks/">Go back</a>"');
   }catch(e){
@@ -295,36 +303,6 @@ app.get('/assignments/:id', async (req, res, next) => {
   }
 });
 
-//------------------- FUNCTIONS -------------------
-
-//USERS
-
-async function linFunc(b){
-	console.log(b);
-	var mat = b.matr;
-	var pass = sha1(b.password);
-	var stato = 400;
-	var utente = await query('SELECT * FROM "user" WHERE iduser = \''+mat+'\' AND password = \''+pass+'\';');
-	if(utente.rows[0].iduser !=  undefined){
-		logId = utente.rows[0].iduser;
-		logged = true;
-		console.log(logId);
-		stato = 200;
-	}
-	return stato;
-}
-
-async function slog(){
-	var s = 200;
-	try{
-		logged = false;
-		logId = "";
-	}catch(e){
-		next(e)
-		s = 400;
-	}
-	return s;
-}
 
 //TASKS
 /* NON SERVE

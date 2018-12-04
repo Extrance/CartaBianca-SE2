@@ -1,6 +1,6 @@
 const db = require('./dbconnect.js')
 
-exports.getTasks = async() =>{
+exports.getTasks = async(logged) =>{
   var t = '<html><head></head><body><h1>Lista Tasks:</h1>';
   var g = await db.query('SELECT * FROM "task";');
   for (var i in g.rows){
@@ -24,7 +24,7 @@ exports.insTask = async(name,desc,risp) =>{
   }
 }
 
-exports.getTask = async(id) =>{
+exports.getTask = async(id, logged) =>{
   var g = await db.query('SELECT * FROM "task" WHERE idtask = \''+id+'\';');
   if(g.rows[0] != undefined) {
     var t = '<html><head></head><body><h1>Task: '+g.rows[0].name+'</h1>';
@@ -38,7 +38,7 @@ exports.getTask = async(id) =>{
   return {status:404,text:""};
 }
 
-exports.insertTaskById = async(id,ans) =>{
+exports.insertTaskById = async(id,ans, logId) =>{
   try{
     var voto = 10;
     await db.query('INSERT INTO "taskAw" (iduser, idtask, answer, mark) VALUES (\''+logId+'\', \''+id+'\', \''+ans+'\', \''+voto+'\')');
