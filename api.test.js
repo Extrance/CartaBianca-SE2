@@ -6,6 +6,10 @@ const express = require('express');
 const pg      = require('pg');
 const app = express();
 const bodyParser = require('body-parser');
+var sha1 	= require('sha1');
+
+var logged = false;
+var logId;
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -39,9 +43,6 @@ async function query (q) {
   return res
 }
 
-var logged = true;
-var logId = 185010;
-
 //==================================== TEST CASES ====================================
 
 //-------------------- USERS + MAIN --------------------
@@ -49,6 +50,20 @@ var logId = 185010;
 describe('GET /', () => {
   it('should return 200', () => {
     expect(getMain().status).toBe(200);
+  })
+})
+
+describe('POST /lin OK', () => {
+  it('should return 200', () => {
+    b = {mat:185011, password:'SalviniPremier'}
+    expect(linFunc(b)).toBe(200);
+  })
+})
+
+describe('POST /lin NOT', () => {
+  it('should return 400', () => {
+    b = {matr:185011, password:'VivaMacron'}
+    expect(linFunc(b)).toBe(400);
   })
 })
 
@@ -322,6 +337,17 @@ function getMain() {
                 ' '+'<a href="/assignments/">List of Assignments</a>'+"<br>"
   t+='</body></html>'
   return {status:200,text:t};
+}
+
+async function linFunc(b) {
+	var mat = b.matr;
+	var pass = sha1(b.password);
+	var stato = 400;
+	var utente = await query('SELECT * FROM "user" WHERE iduser = \''+mat+'\' AND password = \''+pass+'\';');
+	if(utente.rows[0].iduser !=  undefined){
+		stato = 200;
+	}
+	return stato;
 }
 
 async function userIn(){
