@@ -44,7 +44,7 @@ app.post('/users/', async (req, res, next) => {
   var a = req.body;
   try{
     var a = await usersfunctions.insUt(a);
-	console.log('A: ' +a);
+	console.log('A: ' +a); 
     if(a==201)
       res.redirect('/users');
 	   if(a==406 || a == 400)
@@ -283,7 +283,6 @@ app.post('/tasks/:id', async (req, res, next) => {
 });
 
 // ---------------- ASSIGNMENT PAGES ----------------
-
 
 app.get('/assignments/', async (req, res, next) => {
   try{
