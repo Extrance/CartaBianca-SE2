@@ -80,14 +80,17 @@ exports.getUserByIdTest = async(logged, id, logId) =>{
 }
 
 exports.linFunc = async(b) => {
-	var mat = b.matr;
-	var pass = sha1(b.password);
-	var stato = 400;
-	var utente = await db.query('SELECT * FROM "user" WHERE iduser = \''+mat+'\' AND password = \''+pass+'\';');
-	if(utente.rows[0].iduser !=  undefined){
-		stato = 200;
-	}
-	return stato;
+  var mat = b.matr;
+  var pass = sha1(b.password);
+  var stato = 400;
+  var utente = await db.query('SELECT * FROM "user" WHERE iduser = \''+mat+'\';');
+  if(utente.rows[0].iduser !=  undefined && utente.rows[0].password == pass){
+    stato = 200;
+  }
+  else {
+    stato = 400;
+  }
+  return stato;
 }
 
 exports.delUt = async(id) =>{
