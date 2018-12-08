@@ -88,14 +88,16 @@ app.post('/users/:id', async (req, res, next) => {
 app.post('/lin/', async (req, res, next) => {
   try{
     var t = await usersfunctions.linFunc(req.body);
-    if(t==200)
-		logged = true;
-		logId = req.body.matr;
-		res.redirect('/users/');
-	   if(t==400)
-     res.write('Wrong typo, user not loggedIn. <br /> <a href="/users/">Go back</a>"');
+    if(t==200) {
+      logged = true;
+      logId = req.body.matr;
+      res.redirect('/users/');
+    }
+    if(t==400)
+     res.send('Wrong typo, user not loggedIn. <br /> <a href="/users/">Go back</a>"');
   }catch (e){
     next(e);
+    res.send('Wrong typo, user not loggedIn. <br /> <a href="/users/">Go back</a>"');
   }
 });
 
