@@ -6,6 +6,7 @@ const usersfunctions = require('./func/users.js')
 const examsfunctions = require('./func/exams.js')
 const groupsfunctions = require('./func/groups.js')
 const tasksfunctions = require('./func/tasks.js')
+const db = require('./func/dbconnect.js')
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
@@ -288,13 +289,14 @@ app.post('/tasks/:id', async (req, res, next) => {
 
 app.get('/assignments/', async (req, res, next) => {
   try{
-    res.json((await query('SELECT * FROM "assignment";')).rows);
+    res.json((await db.query('SELECT * FROM "taskAw";')).rows);
     //res.json((await query('SELECT * FROM "taskAw";')).rows);
   }catch(e){
     next(e);
   }
 });
 
+/*
 app.get('/assignments/:id', async (req, res, next) => {
   try{
     var t = await getAssignment(req.params.id);
@@ -303,7 +305,7 @@ app.get('/assignments/:id', async (req, res, next) => {
   }catch(e){
     next(e);
   }
-});
+});*/
 
 
 //TASKS
