@@ -390,6 +390,105 @@ paths:
             $ref: '#/definitions/Tasks'
         '400':
           description: Invalid Request
+  /tasks/open:
+    get:
+      tags:
+        - Tasks
+      summary: GET - Returns options for a open answer task
+      operationId: optionsTaskOpen
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+              format: int32
+    post:
+      tags:
+        - Tasks
+      summary: POST - Create a new open task
+      operationId: insTaskOpen
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Tasks'
+        '400':
+          description: Invalid Request
+  /tasks/single:
+    get:
+      tags:
+        - Tasks
+      summary: GET - Returns options for a single choice task
+      operationId: optionsTaskSingle
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+              format: int32
+    post:
+      tags:
+        - Tasks
+      summary: POST - Create a new single choice task
+      operationId: insTaskSingle
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Tasks'
+        '400':
+          description: Invalid Request
+  /tasks/multi:
+    get:
+      tags:
+        - Tasks
+      summary: GET - Returns options for a multiple choice task
+      operationId: optionsTaskMulti
+      produces:
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+              format: int32
+    post:
+      tags:
+        - Tasks
+      summary: POST - Create a new multiple choice task
+      operationId: insTaskMulti
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Tasks'
+        '400':
+          description: Invalid Request
   '/tasks/{taskId}':
     get:
       tags:
