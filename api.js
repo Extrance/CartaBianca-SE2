@@ -45,7 +45,7 @@ app.post('/users/', async (req, res, next) => {
   var a = req.body;
   try{
     var a = await usersfunctions.insUt(a);
-	console.log('A: ' +a); 
+	console.log('A: ' +a);
     if(a==201)
       res.redirect('/users');
 	   if(a==406 || a == 400)
@@ -91,10 +91,10 @@ app.post('/lin/', async (req, res, next) => {
     var t = await usersfunctions.linFunc(req.body);
     if(t==200) {
       logged = true;
-      logId = req.body.matr;
-      res.redirect('/users/');
+  		logId = req.body.matr;
+  		res.redirect('/users/');
     }
-    if(t==400)
+	  if(t==400)
      res.send('Wrong typo, user not loggedIn. <br /> <a href="/users/">Go back</a>"');
   }catch (e){
     next(e);
@@ -166,6 +166,9 @@ app.get('/exams/:id', async (req, res, next) => {
     if(t.status == 200) {
       res.write(t.text);
       res.end('</body></html>')
+    }
+    else {
+      res.send('Esame non esistente');
     }
 });
 
@@ -255,7 +258,42 @@ app.get('/tasks/', async (req, res, next) => {
 
 app.post('/tasks/', async (req, res, next) => {
   try{
-	   var t = await tasksfunctions.insTask(req.body.name,req.body.desc,req.body.risp);
+    if(req.body.type == "open") {
+      res.redirect('/tasks/open');
+    }
+    else if(req.body.type == "single") {
+      res.redirect('/tasks/single');
+    }
+    else if(req.body.type == "multi") {
+      res.redirect('/tasks/multi');
+    }
+    //var a = await tasksfunctions.optionsTask(req.body.name,req.body.desc,req.body.type);
+	   //var t = await tasksfunctions.insTask(req.body.name,req.body.desc,req.body.risp);
+	   //if (t==200) res.redirect('/tasks/');
+	   //if (t==400) res.write('Wrong typo, task not created. <br /> <a href="/tasks/">Go back</a>"');
+  }catch(e){
+    next(e);
+  }
+});
+
+
+
+//==============================================================================
+app.get('/tasks/open', async (req, res, next) => {
+  try{
+    var t = await tasksfunctions.optionsTaskOpen(logged);
+    res.write(t.text);
+    res.end('</body></html>');
+  }catch(e){
+    next(e);
+  }
+});
+
+app.post('/tasks/open', async (req, res, next) => {
+  try{
+    //var a = await tasksfunctions.optionsTask(req.body.name,req.body.desc,req.body.type);
+
+	   var t = await tasksfunctions.insTask(req.body.name,req.body.desc,0,req.body.risp);  //0 = open
 	   if (t==200) res.redirect('/tasks/');
 	   if (t==400) res.write('Wrong typo, task not created. <br /> <a href="/tasks/">Go back</a>"');
   }catch(e){
@@ -263,7 +301,89 @@ app.post('/tasks/', async (req, res, next) => {
   }
 });
 
+
+app.get('/tasks/single', async (req, res, next) => {
+  try{
+    var t = await tasksfunctions.optionsTaskSingle(logged);
+    res.write(t.text);
+    res.end('</body></html>');
+  }catch(e){
+    next(e);
+  }
+});
+
+app.post('/tasks/single', async (req, res, next) => {
+  try{
+    //var a = await tasksfunctions.optionsTask(req.body.name,req.body.desc,req.body.type);
+    //var optrisp = '{'req.body.opt1+';'+req.body.opt2+';'+req.body.opt3+';'+req.body.opt4+';'++req.body.opt5+';'   +'}'
+    var risposta = req.body.risp;
+
+    var optrisp = ''+req.body.opt1+';'+req.body.opt2+';'+req.body.opt3+';'+req.body.opt4+';'+req.body.opt5+';'+risposta+'';
+    //var stringoptrisp = JSON.stringify(optrisp);
+
+    var t = await tasksfunctions.insTask(req.body.name,req.body.desc,1,optrisp);  //1 = single
+
+	   //var t = await tasksfunctions.insTask(req.body.name,req.body.desc,0,req.body.risp);  //0 = open
+	   if (t==200) res.redirect('/tasks/');
+	   if (t==400) res.write('Wrong typo, task not created. <br /> <a href="/tasks/">Go back</a>"');
+  }catch(e){
+    next(e);
+  }
+});
+
+app.get('/tasks/multi', async (req, res, next) => {
+  try{
+    var t = await tasksfunctions.optionsTaskMulti(logged);
+    res.write(t.text);
+    res.end('</body></html>');
+  }catch(e){
+    next(e);
+  }
+});
+
+app.post('/tasks/multi', async (req, res, next) => {
+  try{
+    console.log(req.body);
+    var risposte='';
+
+    if(req.body.option1 != undefined) {
+      risposte+='1-';
+      //console.log("option1 checked");
+    }
+    if(req.body.option2 != undefined) {
+      risposte+='2-';
+      //console.log("option2 checked");
+    }
+    if(req.body.option3 != undefined) {
+      risposte+='3-';
+      //console.log("option3 checked");
+    }
+    if(req.body.option4 != undefined) {
+      risposte+='4-';
+      //console.log("option4 checked");
+    }
+    if(req.body.option5 != undefined) {
+      risposte+='5-';
+      //console.log("option5 checked");
+    }
+    //var risposta = req.body.risp;
+
+    var optrisp = ''+req.body.opt1+';'+req.body.opt2+';'+req.body.opt3+';'+req.body.opt4+';'+req.body.opt5+';'+risposte+'';
+
+    var t = await tasksfunctions.insTask(req.body.name,req.body.desc,2,optrisp);  //2 = multi
+
+	   if (t==200) res.redirect('/tasks/');
+	   if (t==400) res.write('Wrong typo, task not created. <br /> <a href="/tasks/">Go back</a>"');
+  }catch(e){
+    next(e);
+  }
+});
+
+
+//==============================================================================
+
 //OK
+
 app.get('/tasks/:id', async (req, res, next) => {
   try{
     var t = await tasksfunctions.getTask(req.params.id, logged);
@@ -277,11 +397,44 @@ app.get('/tasks/:id', async (req, res, next) => {
 //
 app.post('/tasks/:id', async (req, res, next) => {
   try{
-    var t = await tasksfunctions.insertTaskById(req.params.id,req.body.ans, logId)
+    var g = await db.query('SELECT * FROM "task" WHERE idtask = \''+req.params.id+'\';');
+    if(g.rows[0] != undefined) {
+      console.log('nome: '+g.rows[0].name)
+      console.log('descrizione: '+g.rows[0].description)
+      console.log('tipo: '+g.rows[0].tipo)
+      if(g.rows[0].tipo == 0) {
+        var t = await tasksfunctions.insertTaskById(req.params.id,req.body.ans, logId)
+      }
+      else if(g.rows[0].tipo == 1) {
+        var answer = req.body.risp;
+        var t = await tasksfunctions.insertTaskById(req.params.id,answer, logId)
+      }
+      else if(g.rows[0].tipo == 2) {
+        var answer = '';
+        if(req.body.option1 != undefined) {
+          answer+='1-'
+        }
+        if(req.body.option2 != undefined) {
+          answer+='2-'
+        }
+        if(req.body.option3 != undefined) {
+          answer+='3-'
+        }
+        if(req.body.option4 != undefined) {
+          answer+='4-'
+        }
+        if(req.body.option5 != undefined) {
+          answer+='5-'
+        }
+        var t = await tasksfunctions.insertTaskById(req.params.id,answer, logId)
+      }
+    }
+    //var t = await tasksfunctions.insertTaskById(req.params.id,req.body.ans, logId)
     if (t==200) res.redirect('/tasks/');
-    if (t==400) res.write('Wrong typo, not inserted. <br /> <a href="/tasks/">Go back</a>"');
+    if (t==400) res.send('Wrong typo, not inserted. <br /> <a href="/tasks/">Go back</a>"');
   }catch(e){
-    next(e);
+    //next(e);
+    res.send("ERROR");
   }
 });
 
