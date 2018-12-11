@@ -6,6 +6,7 @@ const usersfunctions = require('./func/users.js')
 const examsfunctions = require('./func/exams.js')
 const groupsfunctions = require('./func/groups.js')
 const tasksfunctions = require('./func/tasks.js')
+const assignmentsfunctions = require('./func/assignments.js')
 const db = require('./func/dbconnect.js')
 
 app.use(bodyParser.urlencoded({extended: false}));
@@ -92,7 +93,7 @@ app.post('/lin/', async (req, res, next) => {
     if(t==200) {
       logged = true;
   		logId = req.body.matr;
-  		res.redirect('/users/');
+  		res.redirect('/');
     }
 	  if(t==400)
      res.send('Wrong typo, user not loggedIn. <br /> <a href="/users/">Go back</a>"');
@@ -440,13 +441,25 @@ app.post('/tasks/:id', async (req, res, next) => {
 
 // ---------------- ASSIGNMENT PAGES ----------------
 
+//OK?
 app.get('/assignments/', async (req, res, next) => {
   try{
-    res.json((await db.query('SELECT * FROM "taskAw";')).rows);
-    //res.json((await query('SELECT * FROM "taskAw";')).rows);
+	var t = await assignmentsfunctions.getAssignments(logged, logId);
+	res.status(t.s);
+	res.write(t.t);
   }catch(e){
     next(e);
   }
+});
+
+app.post('/assignments/', async(req, res, next) => {
+	try{
+		var t = await assignmentsfunctions.setAssignment(logged, logId, req.body);
+		if (t==200) res.redirect('/assignments');
+		if (t==400) res.write('PROBLEMA.');
+	}catch(e){
+		next(e);
+	}
 });
 
 /*
