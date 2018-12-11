@@ -1,6 +1,6 @@
 <h1>EXAMS CONTROL SYSTEM</h1>
 
-<h4>Partecipanti:</h4>
+<h4>Members:</h4>
 Andrea Balasso<br>
 Jari Sciampi<br>
 Francesco Giacomazzi<br>
