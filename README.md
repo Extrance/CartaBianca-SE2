@@ -11,7 +11,7 @@ https://cartabiancase2-automatic.herokuapp.com
 
 Apiary<br>
 https://se2proj.docs.apiary.io/
-<br>
+<br><br>
 <h3>Concept</h3>
 Project for the SE2 uniTn course<br>
 Develop a system for manage exams submission and review<br>
@@ -42,7 +42,7 @@ Page with the list of all tasks, possible to open the single page of a task thro
 
 <h4>/task/{id}</h4>
 Page of the specific task, where the user can answer the question and submit the answer. Methods to be implemented
-<br>
+<br><br>
 <h2>Methods</h2>
 We choose to develop the following methods for each resource<br>
 <h3>Mainpage and /users/ resources</h3>
