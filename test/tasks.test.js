@@ -3,10 +3,10 @@ const pg      = require('pg');
 const app = express();
 const bodyParser = require('body-parser');
 var sha1 	= require('sha1');
-const usersfunctions = require('./func/users.js')
-const examsfunctions = require('./func/exams.js')
-const groupsfunctions = require('./func/groups.js')
-const tasksfunctions = require('./func/tasks.js')
+const usersfunctions = require('../func/users.js')
+const examsfunctions = require('../func/exams.js')
+const groupsfunctions = require('../func/groups.js')
+const tasksfunctions = require('../func/tasks.js')
 
 var logged = false;
 var logId;
