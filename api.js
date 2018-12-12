@@ -445,9 +445,10 @@ app.post('/tasks/:id', async (req, res, next) => {
 app.get('/assignments/', async (req, res, next) => {
   try{
 	var t = await assignmentsfunctions.getAssignments(logged, logId);
-	res.status(t.s);
+	console.log(t);
 	res.write(t.t);
   }catch(e){
+		console.log(e);
     next(e);
   }
 });
@@ -462,6 +463,41 @@ app.post('/assignments/', async(req, res, next) => {
 	}
 });
 
+
+app.get('/assignments/:id', async (req, res, next) => {
+  try{
+		var t = await assignmentsfunctions.previewAssignment(logged, logId, req.params.id);
+		if(t.status == 200) res.write(t.text);
+		if(t.status == 400) res.sendStatus(t.status);
+  }catch(e){
+    next(e);
+  }
+});
+
+/*
+app.get('/assignments/res/:id', async (req, res, next) => {
+  try{
+		var t = await assignmentsfunctions.viewAssignment(logged, logId, req.params.id);
+
+		if(t.status == 200) res.write(t.text);
+		if(t.status == 400) res.sendStatus(t.status);
+  }catch(e){
+	  console.log(e);
+    next(e);
+  }
+});
+
+app.get('/assignments/:id/:task', async (req, res, next) => {
+  try{
+	   var t = await assignmentsfunctions.viewTaskAss(logged, logId, req.params.id, req.params.task);
+     if(t.status == 200) res.write(t.text);
+	   if(t.status == 400) res.sendStatus(t.status);
+  }catch(e){
+    next(e);
+  }
+});
+
+*/
 /*
 app.get('/assignments/:id', async (req, res, next) => {
   try{
