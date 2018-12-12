@@ -1,8 +1,782 @@
 swagger: '2.0'
 info:
-  version: '1.0'
-  title: "SE2-Proj"
-  description: Blank https://github.com/Extrance/CartaBianca-SE2.git
+  description: 'Exam-ify: project for SE2 unitn course'
+  version: 1.0.0
+  title: Exam-ify
   license:
-    name: MIT
-    url: https://github.com/apiaryio/polls-api/blob/master/LICENSE
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+host: se2proj.docs.apiary.io
+basePath: /
+tags:
+  - name: Mainpage
+    description: Display Mainpage
+  - name: Users
+    description: Operations about users
+  - name: Groups
+    description: Operations about groups
+  - name: Tasks
+    description: Operations about tasks
+  - name: Exams
+    description: Operations about exams
+    externalDocs:
+      description: Find out more about our website
+      url: 'http://swagger.io'
+schemes:
+  - https
+  - http
+paths:
+  /:
+    get:
+      tags:
+        - Mainpage
+      summary: GET - Allow user to navigate through links
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/xml
+        - application/json
+      responses:
+        '200':
+          description: OK, valid request
+
+  /users:
+    get:
+      tags:
+        - Users
+      summary: GET - Display list of all users
+      operationId: userIn || userOut
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/xml
+        - application/json
+      responses:
+        '200':
+          description: OK, valid request
+    post:
+      tags:
+        - Users
+      summary: POST - Add a new user to the site
+      description: Add a user
+      operationId: insUt
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: userId
+          in: formData
+          description: ID of User that needs to be added
+          required: true
+          type: integer
+          format: int64
+        - name: name
+          in: formData
+          description: Name of the user to add
+          required: true
+          type: string
+        - name: surname
+          in: formData
+          description: Surname of the user to add
+          required: true
+          type: string
+        - name: password
+          in: formData
+          description: Password of the user to add
+          required: true
+          type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Wrong typo, user not registered
+        '406':
+          description: Not accepted, matricola not OK
+  '/users/{userId}':
+    get:
+      tags:
+        - Users
+      summary: GET - Display page of user by ID
+      operationId: getUserByIdTest
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: userId
+          in: path
+          description: ID of user to return
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: OK, valid request
+        '404':
+          description: User not found
+    post:
+      tags:
+        - Users
+      summary: DELETE - Deletes a user
+      operationId: delUt
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: userId
+          in: path
+          description: User id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Wrong typo, user not deleted
+  /lin:
+    post:
+      tags:
+        - Users
+      summary: POST - Login method
+      operationId: linFunc
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: userId
+          in: formData
+          description: User id to login
+          required: true
+          type: integer
+          format: int64
+        - name: password
+          in: formData
+          description: User password to login
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Wrong typo, user not loggedIn
+  /slog:
+    post:
+      tags:
+        - Users
+      summary: POST - Logout method
+      produces:
+        - application/xml
+        - application/json
+      parameters: []
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Errore in slogphase
+  /exams:
+    get:
+      tags:
+        - Exams
+      summary: GET - Returns list of exams
+      operationId: getExams
+      produces:
+        - application/json
+      parameters:
+        - name: logged
+          in: header
+          description: boolean
+          required: true
+          type: boolean
+        - name: logId
+          in: header
+          description: User logged in
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+    post:
+      tags:
+        - Exams
+      summary: POST - Create a new exam
+      operationId: createEx
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: idcreatore
+          in: formData
+          required: true
+          type: integer
+          format: int64
+        - name: name
+          in: formData
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Exams'
+        '400':
+          description: Invalid Request
+  /exams/delete:
+    post:
+      tags:
+        - Exams
+      summary: DELETE - Deletes an exam
+      operationId: delEx
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: examId
+          in: header
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+  '/exams/{examId}':
+    get:
+      tags:
+        - Exams
+      summary: GET - Display page of exam by ID
+      operationId: getExamByIdTest
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: examId
+          in: path
+          description: ID of exam to return
+          required: true
+          type: integer
+          format: int64
+        - name: logged
+          in: header
+          description: boolean
+          required: true
+          type: boolean
+        - name: logId
+          in: header
+          description: User logged in
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '404':
+          description: Exam not found
+    post:
+      tags:
+        - Exams
+      summary: POST - Update roles
+      operationId: insEx
+      parameters:
+        - name: examId
+          in: path
+          description: ID of Exam that needs to be updated
+          required: true
+          type: integer
+          format: int64
+        - name: taskId
+          in: formData
+          description: task to add
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid input
+  /groups:
+    get:
+      tags:
+        - Groups
+      summary: GET - Returns list of groups
+      operationId: getGroups
+      produces:
+        - application/json
+      parameters:
+        - name: logged
+          in: header
+          description: boolean
+          required: true
+          type: boolean
+      responses:
+        '200':
+          description: successful operation
+    post:
+      tags:
+        - Groups
+      summary: POST - Create a new group
+      operationId: insGr
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: name
+          in: formData
+          description: group to add
+          required: true
+          type: string
+        - name: logId
+          in: header
+          description: User logged in
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Groups'
+        '400':
+          description: Invalid Request
+  '/groups/{groupId}':
+    get:
+      tags:
+        - Groups
+      summary: GET - Display page of group by ID
+      operationId: getGroupByIdTest
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: groupId
+          in: path
+          description: ID of group to return
+          required: true
+          type: integer
+          format: int64
+        - name: logged
+          in: header
+          description: boolean
+          required: true
+          type: boolean
+        - name: logId
+          in: header
+          description: User logged in
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '404':
+          description: Group not found
+    post:
+      tags:
+        - Groups
+      summary: POST - Add user to group
+      operationId: insertGroupById
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: groupId
+          in: path
+          description: ID of group
+          required: true
+          type: integer
+          format: int64
+        - name: userId
+          in: formData
+          description: ID of user to add
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Groups'
+        '400':
+          description: Invalid Request
+  '/groups/del/{groupId}':
+    post:
+      tags:
+        - Groups
+      summary: DELETE - Deletes a group
+      operationId: delGr
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: groupId
+          in: path
+          description: Group id to delete
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+  /tasks:
+    get:
+      tags:
+        - Tasks
+      summary: GET - Returns list of tasks
+      operationId: getTasks
+      produces:
+        - application/json
+      parameters:
+        - name: logged
+          in: header
+          description: boolean
+          required: true
+          type: boolean
+      responses:
+        '200':
+          description: successful operation
+    post:
+      tags:
+        - Tasks
+      summary: POST - Create a new task
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: type
+          in: formData
+          description: type of task
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Tasks'
+        '400':
+          description: Invalid Request
+  /tasks/open:
+    get:
+      tags:
+        - Tasks
+      summary: GET - Returns options for a open answer task
+      operationId: optionsTaskOpen
+      produces:
+        - application/json
+      parameters:
+        - name: logged
+          in: header
+          description: boolean
+          required: true
+          type: boolean
+      responses:
+        '200':
+          description: successful operation
+    post:
+      tags:
+        - Tasks
+      summary: POST - Create a new open task
+      operationId: insTaskOpen
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: name
+          in: formData
+          description: name of open task to add
+          required: true
+          type: string
+        - name: description
+          in: formData
+          description: description of open task to add
+          required: true
+          type: string
+        - name: risp
+          in: formData
+          description: answer of open task to add
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Tasks'
+        '400':
+          description: Invalid Request
+  /tasks/single:
+    get:
+      tags:
+        - Tasks
+      summary: GET - Returns options for a single choice task
+      operationId: optionsTaskSingle
+      produces:
+        - application/json
+      parameters:
+        - name: logged
+          in: header
+          description: boolean
+          required: true
+          type: boolean
+      responses:
+        '200':
+          description: successful operation
+    post:
+      tags:
+        - Tasks
+      summary: POST - Create a new single choice task
+      operationId: insTaskSingle
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: name
+          in: formData
+          description: name of single choice task to add
+          required: true
+          type: string
+        - name: description
+          in: formData
+          description: description of single choice task to add
+          required: true
+          type: string
+        - name: risp
+          in: formData
+          description: answer of single choice task to add
+          required: true
+          type: integer
+          format: int64
+        - name: options[]
+          in: formData
+          description: options of single choice task to add
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Tasks'
+        '400':
+          description: Invalid Request
+  /tasks/multi:
+    get:
+      tags:
+        - Tasks
+      summary: GET - Returns options for a multiple choice task
+      operationId: optionsTaskMulti
+      produces:
+        - application/json
+      parameters:
+        - name: logged
+          in: header
+          description: boolean
+          required: true
+          type: boolean
+      responses:
+        '200':
+          description: successful operation
+    post:
+      tags:
+        - Tasks
+      summary: POST - Create a new multiple choice task
+      operationId: insTaskMulti
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: name
+          in: formData
+          description: name of multiple choice task to add
+          required: true
+          type: string
+        - name: description
+          in: formData
+          description: description of multiple choice task to add
+          required: true
+          type: string
+        - name: risp[]
+          in: formData
+          description: answers of multiple choice task to add
+          required: true
+          type: integer
+          format: int64
+        - name: options[]
+          in: formData
+          description: options of multiple choice task to add
+          required: true
+          type: string
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Tasks'
+        '400':
+          description: Invalid Request
+  '/tasks/{taskId}':
+    get:
+      tags:
+        - Tasks
+      summary: GET - Display page of task by ID
+      operationId: getTask
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: taskId
+          in: path
+          description: ID of task to return
+          required: true
+          type: integer
+          format: int64
+        - name: logged
+          in: header
+          description: boolean
+          required: true
+          type: boolean
+      responses:
+        '200':
+          description: successful operation
+        '400':
+          description: Invalid ID supplied
+    post:
+      tags:
+        - Tasks
+      summary: POST - Answer the task
+      operationId: insertTaskById
+      produces:
+        - application/xml
+        - application/json
+      parameters:
+        - name: taskId
+          in: path
+          description: ID of task
+          required: true
+          type: integer
+          format: int64
+        - name: ans
+          in: formData
+          description: answer
+          required: true
+          type: string
+        - name: logId
+          in: header
+          description: user logged in
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: successful operation
+          schema:
+            $ref: '#/definitions/Tasks'
+        '400':
+          description: Invalid Request
+definitions:
+  Users:
+    type: object
+    properties:
+      userId:
+        type: integer
+        format: int64
+      name:
+        type: string
+      surname:
+        type: string
+      password:
+        type: string
+    xml:
+      name: Users
+  Exams:
+    type: object
+    properties:
+      examId:
+        type: integer
+        format: int64
+      name:
+        type: string
+      creatorId:
+        type: integer
+        format: int64
+    xml:
+      name: Exams
+  Tasks:
+    type: object
+    properties:
+      taskId:
+        type: integer
+        format: int64
+      name:
+        type: string
+      description:
+        type: string
+      answer:
+        type: string
+    xml:
+      name: Tasks
+  Groups:
+    type: object
+    properties:
+      groupId:
+        type: integer
+        format: int64
+      name:
+        type: string
+    xml:
+      name: Groups
+  Former:
+    type: object
+    properties:
+      formerId:
+        type: integer
+        format: int64
+      groupId:
+        type: integer
+        format: int64
+      userId:
+        type: integer
+        format: int64
+      grado:
+        type: integer
+    xml:
+      name: Former
+  ExamFormer:
+    type: object
+    properties:
+      formerId:
+        type: integer
+        format: int64
+      examId:
+        type: integer
+        format: int64
+      taskId:
+        type: integer
+        format: int64
+    xml:
+      name: Former
+  Assignment:
+    type: object
+    properties:
+      assignmentId:
+        type: integer
+        format: int64
+      groupId:
+        type: integer
+        format: int64
+      examId:
+        type: integer
+        format: int64
+      mark:
+        type: integer
+        format: int64
+    xml:
+      name: Former
+externalDocs:
+  description: Find out more about Swagger
+  url: 'http://swagger.io'

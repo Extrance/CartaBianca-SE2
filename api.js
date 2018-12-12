@@ -489,5 +489,24 @@ async function getTaskByIdTest(id) {
   }
 }*/
 
+
+
+//---------------Easter_Egg_SEssion_XD---------------
+
+app.get('/makecoffee/', (req, res, next) => {
+  res.sendStatus(418);
+});
+
+
+app.get('/cat/', (req, res, next) => {
+  res.redirect('https://http.cat/100')
+});
+
+
+app.get('/sub2pewds/', (req, res, next) => {
+  res.redirect('https://www.youtube.com/user/PewDiePie')
+});
+
+
 app.listen(process.env.PORT || 4000, () => console.log('App is online on port 4000'))
 //app.listen(4000, () => console.log('App is online on port 4000'))
