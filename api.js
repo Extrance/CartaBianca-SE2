@@ -12,10 +12,9 @@ const db = require('./func/dbconnect.js')
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-//AGGIUNGERE A ASSIGNMENT CAMPO ASSEGNAZIONE USER TASK E ESAME(CHE ORA MANCA)
-
 var logged = false;
 var logId;
+
 
 // ---------------- MAIN ----------------
 
@@ -444,9 +443,9 @@ app.post('/tasks/:id', async (req, res, next) => {
 //OK?
 app.get('/assignments/', async (req, res, next) => {
   try{
-	var t = await assignmentsfunctions.getAssignments(logged, logId);
-	console.log(t);
-	res.write(t.t);
+	   var t = await assignmentsfunctions.getAssignments(logged, logId);
+	    //console.log(t);
+	     res.write(t.t);
   }catch(e){
 		console.log(e);
     next(e);
@@ -465,6 +464,7 @@ app.post('/assignments/', async(req, res, next) => {
 
 
 app.get('/assignments/:id', async (req, res, next) => {
+  //console.log(await db.query('SELECT * FROM "taskAw";'));
   try{
 		var t = await assignmentsfunctions.previewAssignment(logged, logId, req.params.id);
 		if(t.status == 200) res.write(t.text);
@@ -474,19 +474,72 @@ app.get('/assignments/:id', async (req, res, next) => {
   }
 });
 
-/*
-app.get('/assignments/res/:id', async (req, res, next) => {
-  try{
-		var t = await assignmentsfunctions.viewAssignment(logged, logId, req.params.id);
 
+app.get('/assignments/res/:id', async (req, res, next) => {
+
+  var aaa = await db.query('SELECT * FROM "taskAw";');
+  for(var i in aaa.rows) {
+    console.log(aaa.rows[i].answer);
+  }
+  try{
+    //console.log('MOLTO BENE')
+		var t = await assignmentsfunctions.viewAssignment(logged, logId, req.params.id);
 		if(t.status == 200) res.write(t.text);
 		if(t.status == 400) res.sendStatus(t.status);
   }catch(e){
-	  console.log(e);
     next(e);
   }
 });
 
+app.post('/assignments/res/:id/:task', async (req, res, next) => {
+  var idAss = req.params.id
+  var tab = await db.query('SELECT * FROM "assignment" WHERE idassignment =\''+idAss+'\';');
+  var group = tab.rows[0].idgroup
+  var user = tab.rows[0].iduser
+  var exam = tab.rows[0].idexam
+  var idTask = req.params.task
+
+  var ex = await db.query('SELECT * FROM "examFormer" WHERE idexam =\''+exam+'\';');
+
+  var bbb = await db.query('SELECT * FROM "task" WHERE idtask =\''+idTask+'\';');
+  var answer='';
+
+  if(bbb.rows[0].tipo == 0) {
+    answer+=req.body.risp;
+    //console.log('answer'+answer)
+  }
+  if(bbb.rows[0].tipo == 1) {
+    answer+=req.body.risp;
+    //console.log('answer'+answer)
+  }
+  if(bbb.rows[0].tipo == 2) {
+    //console.log(req.body);
+
+    if(req.body.option1 != undefined) {
+      answer+='1-';
+    }
+    if(req.body.option2 != undefined) {
+      answer+='2-';
+    }
+    if(req.body.option3 != undefined) {
+      answer+='3-';
+    }
+    if(req.body.option4 != undefined) {
+      answer+='4-';
+    }
+    if(req.body.option5 != undefined) {
+      answer+='5-';
+    }
+    console.log('answer'+answer)
+  }
+  console.log('   BEGIN');
+  var a = await assignmentsfunctions.addAnswer(logged, logId, idAss, idTask, group, user, exam, answer);
+  console.log('   DONE');
+  if(a == 201) res.redirect('/assignments/res/'+idAss+'');
+  if(a == 400) res.sendStatus(400);
+});
+
+/*
 app.get('/assignments/:id/:task', async (req, res, next) => {
   try{
 	   var t = await assignmentsfunctions.viewTaskAss(logged, logId, req.params.id, req.params.task);
@@ -496,7 +549,6 @@ app.get('/assignments/:id/:task', async (req, res, next) => {
     next(e);
   }
 });
-
 */
 /*
 app.get('/assignments/:id', async (req, res, next) => {
@@ -544,5 +596,5 @@ app.get('/sub2pewds/', (req, res, next) => {
 });
 
 
-app.listen(process.env.PORT || 4000, () => console.log('App is online on port 4000'))
 //app.listen(4000, () => console.log('App is online on port 4000'))
+app.listen(4000, () => console.log('App is online on port 4000'))
