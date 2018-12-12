@@ -24,7 +24,11 @@ exports.query  = async(q) => {
 		  throw err
 		}
 	  } finally {
-		client.release()
+			client.release()
 	  }
 	  return res
+}
+
+exports.cClose = async() => {
+	await pool.end()
 }
