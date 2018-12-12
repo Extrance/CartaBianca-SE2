@@ -14,6 +14,7 @@ app.use(bodyParser.json());
 
 //AGGIUNGERE A ASSIGNMENT CAMPO ASSEGNAZIONE USER TASK E ESAME(CHE ORA MANCA)
 
+//global
 var logged = false;
 var logId;
 
