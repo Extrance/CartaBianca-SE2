@@ -20,7 +20,7 @@ describe('GET /groups/', async() => {
 
 describe('GET /groups/existingID', async() => {
   it('should return 200', async() => {
-    var t = await groupsfunctions.getGroupByIdTest(1);
+    var t = await groupsfunctions.getGroupByIdTest(27);
     expect(t.status).toBe(200);
   })
 })
@@ -34,7 +34,7 @@ describe('GET /groups/nonexistingID', async() => {
 
 describe('POST /groups/', async() => {
   it('should return 200', async() => {
-    var t = await groupsfunctions.insGr('test',185011);
+    var t = await groupsfunctions.insGr('grouptest',185011);
     expect(t).toBe(200);
   })
 })
@@ -48,21 +48,21 @@ describe('POST /groups/del/nonexistingId', async() => {
 
 describe('POST /groups/del/existingId', async() => {
   it('should return 200', async() => {
-    var t = await groupsfunctions.delGr(10);  //worked when tested
+    var t = await groupsfunctions.delGr(33);  //worked when tested
     expect(t).toBe(200);
   })
 })
 
 describe('POST /groups/:id', async() => {
   it('should return 400', async() => {
-    var t = await groupsfunctions.insertGroupById(17, -1);
+    var t = await groupsfunctions.insertGroupById(27, -1);
     expect(t).toBe(400);
   })
 })
 
 describe('POST /groups/:id', async() => {
   it('should return 200', async() => {
-    var t = await groupsfunctions.insertGroupById(5, 185011);  //worked when tested
+    var t = await groupsfunctions.insertGroupById(27, 185010);  //worked when tested
     expect(t).toBe(200);
   })
 })
